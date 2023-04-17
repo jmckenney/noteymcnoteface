@@ -41,7 +41,10 @@ async function deleteDocument(client, query) {
 export default async function handler(req, res) {
   const client = await connectToDatabase();
 
-  const { method } = req;
+  const {
+    method,
+    query: { id },
+  } = req;
   const { query, document } = req.body;
 
   switch (method) {

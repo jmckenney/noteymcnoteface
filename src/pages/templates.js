@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PageContainer from "../components/PageContainer";
+import Link from "next/link";
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState([]);
@@ -8,7 +9,6 @@ export default function TemplatesPage() {
     const fetchTemplates = async () => {
       const response = await fetch("/api/templates");
       const templates = await response.json();
-      console.log("templates", templates);
       setTemplates(templates);
     };
     fetchTemplates();
@@ -16,13 +16,15 @@ export default function TemplatesPage() {
 
   return (
     <PageContainer title="Templates">
-      {templates.map((template) => (
+      {templates?.map((template) => (
         <div
           className="flex justify-between items-center mb-8"
           key={template.templateTitle}
         >
           <h2 className="text-2xl">
-            {template.templateTitle} - {template.templateTrigger}
+            <Link href={`/template/${template._id}`}>
+              {template.templateTitle} - {template.templateTrigger}
+            </Link>
           </h2>
         </div>
       ))}

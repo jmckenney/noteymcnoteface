@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PageContainer from "../components/PageContainer";
+import { v4 as uuidv4 } from "uuid";
+import { useRouter } from "next/router";
 
-const PotentialTemplateItem = ({ id, name }) => {
+const PotentialTemplateItem = ({ id, name, key }) => {
   return (
     <div className="p-2 m-1 border border-gray-300 rounded cursor-pointer flex">
       <svg
@@ -23,21 +25,13 @@ const PotentialTemplateItem = ({ id, name }) => {
   );
 };
 
-const AddedTemplateItems = ({ id, name, index }) => {
-  return (
-    <div key={id} className={`p-2 m-1 rounded`}>
-      {name}
-    </div>
-  );
-};
-
 export default function TemplateCreationPage() {
   const [potentialTemplateItems, setPotentialTemplateItems] = useState([
     { id: 1, name: "Session Number", key: "sessionNumber" },
     { id: 2, name: "Referral", key: "referral" },
     { id: 3, name: "Prescription", key: "prescription" },
     { id: 4, name: "Metric Point (Weight)", key: "metricPointWeight" },
-    { id: 5, name: "Custom template (TODO)", key: "custom" },
+    { id: 5, name: "Custom template", key: "custom" },
   ]);
 
   const [addedTemplateItems, setAddedTemplateItems] = useState([]);
@@ -45,14 +39,76 @@ export default function TemplateCreationPage() {
   const [templateTrigger, setTemplateTrigger] = useState("");
   const [templateDescription, setTemplateDescription] = useState("");
 
-  const handleAdd = (id) => {
-    setAddedTemplateItems((prevComponents) => [
-      ...prevComponents,
-      potentialTemplateItems.find((component) => component.id === id),
-    ]);
-    setPotentialTemplateItems((prevComponents) => {
-      return prevComponents.filter((component) => component.id !== id);
+  const [forms, setForms] = useState([]);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      const response = await fetch("/api/forms");
+      const forms = await response.json();
+      setForms(forms);
+    };
+    fetchTemplates();
+  }, []);
+
+  const AddedTemplateItems = ({ id, name, index, uuid }) => {
+    const formChooserOptions = id === 5 ? forms : null;
+    return (
+      <div className={`p-2 m-1 rounded`}>
+        {name}{" "}
+        {formChooserOptions && (
+          <select
+            name={uuid}
+            onChange={(e) => {
+              const selectedIndex = e.target.selectedIndex;
+              const selectedOption = e.target.options[selectedIndex];
+              const formUuid = selectedOption.getAttribute("data-form");
+              handleFormSelection(e.target.getAttribute("name"), formUuid);
+            }}
+          >
+            <option>Select one</option>
+            {forms.map((form) => (
+              <option key={form._id} data-form={form._id}>
+                {form.formTitle}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+    );
+  };
+
+  const handleAddTemplateItem = (id) => {
+    const templateItemToAdd = potentialTemplateItems.find(
+      (component) => component.id === id
+    );
+    const deepCopy = JSON.parse(JSON.stringify(templateItemToAdd));
+    deepCopy.uuid = uuidv4();
+    setAddedTemplateItems((prevComponents) => [...prevComponents, deepCopy]);
+    // remove from potentialTemplateItems if not a custom form
+    if (id !== 5) {
+      setPotentialTemplateItems((prevComponents) => {
+        return prevComponents.filter((component) => component.id !== id);
+      });
+    }
+  };
+
+  const handleFormSelection = (addedTemplateItemUuid, formUuid) => {
+    // find the addedTemplateItem
+    const templateItemToAugment = addedTemplateItems.find((item) => {
+      return item.uuid === addedTemplateItemUuid;
     });
+    // augment that item with the formUuid to use for the custom form
+    templateItemToAugment.formUuid = formUuid;
+    // get a list of all the other addedTemplateItems
+    const otherAddedTemplateItems = addedTemplateItems.filter((item) => {
+      return item.uuid !== addedTemplateItemUuid;
+    });
+    // setAddedTemplateItems((prevComponents) => [
+    //   ...otherAddedTemplateItems,
+    //   templateItemToAugment,
+    // ]);
   };
 
   const saveTemplate = async () => {
@@ -64,7 +120,6 @@ export default function TemplateCreationPage() {
       templateDescription,
       templateItems: addedTemplateItems,
     };
-    console.log("save template", template);
     const response = await fetch("/api/templates", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -74,6 +129,7 @@ export default function TemplateCreationPage() {
     if (response.ok) {
       console.log("Template saved successfully!");
       // redirect to templates page
+      router.push("/templates");
     } else {
       console.error("Failed to save template");
     }
@@ -144,14 +200,17 @@ export default function TemplateCreationPage() {
 
           <h2 className="text-xl  mb-4">Added Template Items</h2>
           <div className="mt-4">
-            {addedTemplateItems.map((templateItem, index) => (
-              <AddedTemplateItems
-                key={templateItem.id}
-                id={templateItem.id}
-                name={templateItem.name}
-                index={index}
-              />
-            ))}
+            {addedTemplateItems.map((templateItem, index) => {
+              return (
+                <AddedTemplateItems
+                  key={templateItem.uuid}
+                  uuid={templateItem.uuid}
+                  id={templateItem.id}
+                  name={templateItem.name}
+                  index={index}
+                />
+              );
+            })}
           </div>
           <button
             onClick={saveTemplate}
@@ -166,7 +225,7 @@ export default function TemplateCreationPage() {
           {potentialTemplateItems.map((templateItem) => (
             <div
               key={`div${templateItem.id}`}
-              onClick={() => handleAdd(templateItem.id)}
+              onClick={() => handleAddTemplateItem(templateItem.id)}
             >
               <PotentialTemplateItem
                 key={templateItem.id}
