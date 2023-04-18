@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PageContainer from "../components/PageContainer";
+import Link from "next/link";
 
 export default function TemplatesPage() {
   const [forms, setForms] = useState([]);
@@ -16,12 +17,14 @@ export default function TemplatesPage() {
 
   return (
     <PageContainer title="Forms">
-      {forms.map((form) => (
+      {forms?.map((form) => (
         <div
           className="flex justify-between items-center mb-8"
           key={form.formTitle}
         >
-          <h2 className="text-2xl">{form.formTitle}</h2>
+          <h2 className="text-2xl">
+            <Link href={`/form/${form._id}`}>{form.formTitle}</Link>
+          </h2>
         </div>
       ))}
     </PageContainer>
