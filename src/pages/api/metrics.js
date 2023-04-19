@@ -1,4 +1,4 @@
-import { ObjectId, MongoClient } from "mongodb";
+import { MongoClient } from "mongodb";
 
 async function connectToDatabase() {
   const client = await MongoClient.connect(process.env.MONGODB_URI, {
@@ -8,7 +8,7 @@ async function connectToDatabase() {
   return client;
 }
 
-const collectionName = "notes";
+const collectionName = "metrics";
 
 async function findDocuments(client, query = {}) {
   const db = client.db();
@@ -28,15 +28,6 @@ async function updateDocument(client, query, update) {
   const db = client.db();
   const collection = db.collection(collectionName);
   const result = await collection.updateOne(query, { $set: update });
-  return result.modifiedCount;
-}
-
-async function patchDocument(client, query, update) {
-  query = { _id: new ObjectId(query._ID) };
-  const db = client.db();
-  const collection = db.collection(collectionName);
-  console.log("QUERY", query, update);
-  const result = await collection.updateOne(query, { $push: update });
   return result.modifiedCount;
 }
 
@@ -75,15 +66,6 @@ export default async function handler(req, res) {
     case "PUT":
       try {
         const modifiedCount = await updateDocument(client, query, document);
-        res.status(200).json({ modifiedCount });
-      } catch (error) {
-        res.status(500).json({ error });
-      }
-      break;
-
-    case "PATCH":
-      try {
-        const modifiedCount = await patchDocument(client, query, document);
         res.status(200).json({ modifiedCount });
       } catch (error) {
         res.status(500).json({ error });

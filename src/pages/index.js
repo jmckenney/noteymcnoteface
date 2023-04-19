@@ -30,16 +30,16 @@ export default function Home() {
                 {open && (
                   <TemplateRenderer>Rendered form here</TemplateRenderer>
                 )}
-                {/* <AppTasks
-                  title="Tasks"
-                  list={[
-                    { id: "1", label: "Change member cadence" },
-                    { id: "2", label: "Add SCSS and JS files if required" },
-                    { id: "3", label: "Stakeholder Meeting" },
-                    { id: "4", label: "Scoping & Estimations" },
-                    { id: "5", label: "Sprint Showcase" },
-                  ]}
-                /> */}
+
+                <Typography variant="h5" sx={{ mb: 5 }}>
+                  In Progress Notes
+                </Typography>
+                {/* render in progress notes */}
+
+                <Typography variant="h5" sx={{ mb: 5 }}>
+                  Finalized Notes
+                </Typography>
+                {/* render finalized notes */}
               </Stack>
             </Grid>
           </Grid>
