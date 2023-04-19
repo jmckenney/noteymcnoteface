@@ -2,6 +2,7 @@ import { Button, Container, Grid, Typography, Stack } from "@mui/material";
 import Header from "@/layouts/dashboard/header";
 import Nav from "@/layouts/dashboard/nav";
 import TemplateRenderer from "@/components/TemplateRenderer";
+import NoteList from "@/components/NoteList";
 import { useState } from "react";
 
 // ----------------------------------------------------------------------
@@ -34,12 +35,12 @@ export default function Home() {
                 <Typography variant="h5" sx={{ mb: 5 }}>
                   In Progress Notes
                 </Typography>
-                {/* render in progress notes */}
+                <NoteList state="IN_PROGRESS" />
 
                 <Typography variant="h5" sx={{ mb: 5 }}>
                   Finalized Notes
                 </Typography>
-                {/* render finalized notes */}
+                <NoteList state="FINALIZED" />
               </Stack>
             </Grid>
           </Grid>

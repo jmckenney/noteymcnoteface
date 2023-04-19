@@ -52,11 +52,15 @@ export default async function handler(req, res) {
 
   const { method } = req;
   const { query, document } = req.body;
+  const { state } = req.query;
 
   switch (method) {
     case "GET":
       try {
-        const documents = await findDocuments(client, query);
+        const filter = state ? { state } : {};
+        console.log(filter, "filter");
+        // limit to 10 documents
+        const documents = await findDocuments(client, filter);
         res.status(200).json(documents);
       } catch (error) {
         res.status(500).json({ error });
