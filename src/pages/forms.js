@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import PageContainer from "../components/PageContainer";
 import Link from "next/link";
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemButton,
+} from "@mui/material";
+import FolderIcon from "@mui/icons-material/Folder";
 
 export default function TemplatesPage() {
   const [forms, setForms] = useState([]);
@@ -17,16 +25,18 @@ export default function TemplatesPage() {
 
   return (
     <PageContainer title="Forms">
-      {forms?.map((form) => (
-        <div
-          className="flex justify-between items-center mb-8"
-          key={form.formTitle}
-        >
-          <h2 className="text-2xl">
-            <Link href={`/form/${form._id}`}>{form.formTitle}</Link>
-          </h2>
-        </div>
-      ))}
+      <List dense>
+        {forms?.map((form) => (
+          <ListItem key="form.formTitle">
+            <ListItemButton component="a" href={`/form/${form._id}`}>
+              <ListItemIcon>
+                <FolderIcon />
+              </ListItemIcon>
+              <ListItemText primary={form.formTitle} secondary={form._id} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
     </PageContainer>
   );
 }
