@@ -4,20 +4,14 @@ import PotentialFormItemDialog from "@/components/PotentialFormItemDialog";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Divider,
   FormControl,
-  IconButton,
-  Input,
   InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Stack,
   Typography,
 } from "@mui/material";
-import { ArrowForwardIos, ArrowBackIos } from "@mui/icons-material";
+import { ArrowBackIos } from "@mui/icons-material";
 
 import { useRouter } from "next/router";
 

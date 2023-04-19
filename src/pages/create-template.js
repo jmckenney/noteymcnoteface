@@ -2,26 +2,29 @@ import { useState, useEffect } from "react";
 import PageContainer from "../components/PageContainer";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/router";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+  Stack,
+} from "@mui/material";
+import ArrowBackIos from "@mui/icons-material/ArrowBackIos";
 
 const PotentialTemplateItem = ({ id, name, key }) => {
   return (
-    <div className="p-2 m-1 border border-gray-300 rounded cursor-pointer flex">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1.5}
-        stroke="currentColor"
-        className="w-6 h-6"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M19.5 12h-15m0 0l6.75 6.75M4.5 12l6.75-6.75"
-        />
-      </svg>
+    <Button variant="outlined" startIcon={<ArrowBackIos />}>
       {name}
-    </div>
+    </Button>
   );
 };
 
@@ -31,7 +34,7 @@ export default function TemplateCreationPage() {
     { id: 2, name: "Referral", key: "referral" },
     { id: 3, name: "Prescription", key: "prescription" },
     { id: 4, name: "Metric Point (Weight)", key: "metricPointWeight" },
-    { id: 5, name: "Custom template", key: "custom" },
+    { id: 5, name: "Custom Form", key: "custom" },
   ]);
 
   const [addedTemplateItems, setAddedTemplateItems] = useState([]);
@@ -52,30 +55,32 @@ export default function TemplateCreationPage() {
     fetchTemplates();
   }, []);
 
-  const AddedTemplateItems = ({ id, name, index, uuid }) => {
+  const AddedTemplateItems = ({ id, name, index, uuid, formDbId = "" }) => {
+    // TODO enhance this to not be dumb:)
     const formChooserOptions = id === 5 ? forms : null;
     return (
-      <div className={`p-2 m-1 rounded`}>
-        {name}{" "}
+      <Box sx={{ p: 1, m: 1, borderRadius: 1 }}>
+        <Typography>{name}</Typography>
         {formChooserOptions && (
-          <select
-            name={uuid}
-            onChange={(e) => {
-              const selectedIndex = e.target.selectedIndex;
-              const selectedOption = e.target.options[selectedIndex];
-              const formUuid = selectedOption.getAttribute("data-form");
-              handleFormSelection(e.target.getAttribute("name"), formUuid);
-            }}
-          >
-            <option>Select one</option>
-            {forms.map((form) => (
-              <option key={form._id} data-form={form._id}>
-                {form.formTitle}
-              </option>
-            ))}
-          </select>
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>Custom Form To Use</InputLabel>
+            <Select
+              name={uuid}
+              onChange={(e) => {
+                handleFormSelection(uuid, e.target.value);
+              }}
+              label="Custom Form To Use"
+              value={formDbId}
+            >
+              {forms.map((form) => (
+                <MenuItem key={form._id} value={form._id}>
+                  {form.formTitle}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         )}
-      </div>
+      </Box>
     );
   };
 
@@ -94,21 +99,21 @@ export default function TemplateCreationPage() {
     }
   };
 
-  const handleFormSelection = (addedTemplateItemUuid, formUuid) => {
+  const handleFormSelection = (addedTemplateItemUuid, formDbId) => {
     // find the addedTemplateItem
     const templateItemToAugment = addedTemplateItems.find((item) => {
       return item.uuid === addedTemplateItemUuid;
     });
-    // augment that item with the formUuid to use for the custom form
-    templateItemToAugment.formUuid = formUuid;
+    // augment that item with the id from the db to use for the custom form
+    templateItemToAugment.formDbId = formDbId;
     // get a list of all the other addedTemplateItems
     const otherAddedTemplateItems = addedTemplateItems.filter((item) => {
       return item.uuid !== addedTemplateItemUuid;
     });
-    // setAddedTemplateItems((prevComponents) => [
-    //   ...otherAddedTemplateItems,
-    //   templateItemToAugment,
-    // ]);
+    setAddedTemplateItems((prevComponents) => [
+      ...otherAddedTemplateItems,
+      templateItemToAugment,
+    ]);
   };
 
   const saveTemplate = async () => {
@@ -137,105 +142,87 @@ export default function TemplateCreationPage() {
 
   return (
     <PageContainer title="Create Template">
-      <div className="flex">
-        <div className="w-3/5 p-4">
-          <h2 className="text-xl  mb-4">Template Details</h2>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm  mb-2"
-              htmlFor="templateTitle"
-            >
-              Template Title
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={7}>
+          <Typography variant="h6" component="h2" gutterBottom>
+            Template Details
+          </Typography>
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              label="Template Title"
               id="templateTitle"
-              type="text"
-              placeholder="Template Title"
-              onChange={(e) => {
-                e.preventDefault();
-                setTemplateTitle(e.target.value);
-              }}
+              variant="outlined"
               value={templateTitle}
+              onChange={(e) => setTemplateTitle(e.target.value)}
             />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm  mb-2"
-              htmlFor="templateTrigger"
-            >
-              Template Trigger
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          </Box>
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              label="Template Trigger"
               id="templateTrigger"
-              type="text"
-              placeholder="Template Trigger"
-              onChange={(e) => {
-                e.preventDefault();
-                setTemplateTrigger(e.target.value);
-              }}
+              variant="outlined"
               value={templateTrigger}
+              onChange={(e) => setTemplateTrigger(e.target.value)}
             />
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm  mb-2"
-              htmlFor="templateDescription"
-            >
-              Template Description
-            </label>
-            <textarea
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          </Box>
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              label="Template Description"
               id="templateDescription"
-              type="text"
-              placeholder="Template Description"
-              onChange={(e) => {
-                e.preventDefault();
-                setTemplateDescription(e.target.value);
-              }}
+              variant="outlined"
               value={templateDescription}
+              onChange={(e) => setTemplateDescription(e.target.value)}
             />
-          </div>
-
-          <h2 className="text-xl  mb-4">Added Template Items</h2>
-          <div className="mt-4">
-            {addedTemplateItems.map((templateItem, index) => {
-              return (
-                <AddedTemplateItems
-                  key={templateItem.uuid}
-                  uuid={templateItem.uuid}
-                  id={templateItem.id}
-                  name={templateItem.name}
-                  index={index}
-                />
-              );
-            })}
-          </div>
-          <button
+          </Box>
+          <Typography variant="h6" component="h2" gutterBottom>
+            Added Template Items
+          </Typography>
+          <Box sx={{ mt: 2 }}>
+            {addedTemplateItems.map((templateItem, index) => (
+              <AddedTemplateItems
+                key={templateItem.uuid}
+                uuid={templateItem.uuid}
+                id={templateItem.id}
+                name={templateItem.name}
+                index={index}
+                formDbId={templateItem.formDbId || ""}
+              />
+            ))}
+          </Box>
+          <Button
             onClick={saveTemplate}
-            className="bg-blue-500 hover:bg-blue-700 text-white  py-2 px-4 mt-4 rounded"
+            variant="outlined"
+            sx={{ mt: 2 }}
             disabled={addedTemplateItems.length === 0}
           >
             Save Template
-          </button>
-        </div>
-        <div className="w-2/5 p-4">
-          <h2 className="text-xl  mb-4">Potential Template Items</h2>
-          {potentialTemplateItems.map((templateItem) => (
-            <div
-              key={`div${templateItem.id}`}
-              onClick={() => handleAddTemplateItem(templateItem.id)}
-            >
-              <PotentialTemplateItem
-                key={templateItem.id}
-                id={templateItem.id}
-                name={templateItem.name}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+          </Button>
+        </Grid>
+        <Grid item xs={12} md={5}>
+          <Typography variant="h6" component="h2" gutterBottom>
+            Potential Template Items
+          </Typography>
+          <Stack spacing={2} sx={{ textAlign: "left" }}>
+            {potentialTemplateItems.map((templateItem) => (
+              <div
+                key={`div${templateItem.id}`}
+                onClick={() => handleAddTemplateItem(templateItem.id)}
+              >
+                <PotentialTemplateItem
+                  key={templateItem.id}
+                  id={templateItem.id}
+                  name={templateItem.name}
+                />
+              </div>
+            ))}
+          </Stack>
+        </Grid>
+      </Grid>
     </PageContainer>
   );
 }
