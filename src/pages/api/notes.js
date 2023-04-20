@@ -10,11 +10,14 @@ async function connectToDatabase() {
 
 const collectionName = "notes";
 
-async function findDocuments(client, query = {}) {
+async function findDocuments(client, query = {}, limit) {
   const db = client.db();
   const collection = db.collection(collectionName);
-  const documents = await collection.find(query).toArray();
-  return documents;
+  if (limit) {
+    return await collection.find(query).limit(limit).toArray();
+  } else {
+    return await collection.find(query).toArray();
+  }
 }
 
 async function createDocument(client, document) {
@@ -52,15 +55,17 @@ export default async function handler(req, res) {
 
   const { method } = req;
   const { query, document } = req.body;
-  const { state } = req.query;
+  const { state, limit } = req.query;
 
   switch (method) {
     case "GET":
       try {
         const filter = state ? { state } : {};
-        console.log(filter, "filter");
-        // limit to 10 documents
-        const documents = await findDocuments(client, filter);
+        let limitInt;
+        if (limit) {
+          limitInt = parseInt(limit, 10);
+        }
+        const documents = await findDocuments(client, filter, limitInt);
         res.status(200).json(documents);
       } catch (error) {
         res.status(500).json({ error });
@@ -69,7 +74,10 @@ export default async function handler(req, res) {
 
     case "POST":
       try {
-        const insertedId = await createDocument(client, document);
+        const insertedId = await createDocument(client, {
+          ...document,
+          created: new Date(),
+        });
         res.status(200).json({ insertedId });
       } catch (error) {
         res.status(500).json({ error });
