@@ -9,7 +9,31 @@ import {
   TextField,
 } from "@mui/material";
 import TemplateMetricPoint from "./template-parts/TemplateMetricPoint";
-import { v4 as uuidv4 } from "uuid";
+import debounce from "lodash/debounce";
+
+const updateNoteTemplateState = async (noteId, augmentedTemplate) => {
+  // patch the template part of the note
+  const noteResponse = await fetch(`/api/notes`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: { _ID: noteId },
+      document: { noteTemplate: augmentedTemplate },
+    }),
+  });
+  if (noteResponse.ok) {
+    console.log("template saved to note");
+  } else {
+    console.error("failed to save template to note");
+  }
+};
+
+const debouncedUpdateNoteTemplateState = debounce(
+  updateNoteTemplateState,
+  1000
+);
 
 export default function TemplateRenderer({ trigger = ".hcinitial" }) {
   const [template, setTemplate] = useState(null);
@@ -62,6 +86,18 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
     fetchTemplate();
   }, []);
 
+  const handleFormInputChange = (templateItemIndex, formItemIndex) => {
+    return (e) => {
+      const augmentedTemplate = { ...template };
+      augmentedTemplate.templateItems[templateItemIndex].form.formItems[
+        formItemIndex
+      ].value = e.target.value;
+      setTemplate(augmentedTemplate);
+      debouncedUpdateNoteTemplateState(noteId, augmentedTemplate);
+      console.log(augmentedTemplate);
+    };
+  };
+
   return (
     <Card>
       <CardHeader
@@ -76,7 +112,7 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
         spacing={3}
       >
         {template ? (
-          template.templateItems.map((item) => {
+          template.templateItems.map((item, templateItemIndex) => {
             switch (item.key) {
               case "sessionNumber":
                 return (
@@ -99,7 +135,7 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
                       {item.form.formTitle}
                     </Typography>
                     {/* loops through the formItems and render titles, inputs, etc */}
-                    {item.form.formItems.map((formItem) => {
+                    {item.form.formItems.map((formItem, formItemIndex) => {
                       switch (formItem.type) {
                         case "input":
                           return (
@@ -108,6 +144,11 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
                               label={formItem.label}
                               variant="outlined"
                               fullWidth
+                              onChange={handleFormInputChange(
+                                templateItemIndex,
+                                formItemIndex
+                              )}
+                              value={formItem?.value}
                             />
                           );
                         case "textarea":
@@ -119,6 +160,11 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
                               fullWidth
                               multiline
                               rows={4}
+                              onChange={handleFormInputChange(
+                                templateItemIndex,
+                                formItemIndex
+                              )}
+                              value={formItem?.value}
                             />
                           );
                         case "title":

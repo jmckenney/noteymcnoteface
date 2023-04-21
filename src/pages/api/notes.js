@@ -38,8 +38,19 @@ async function patchDocument(client, query, update) {
   query = { _id: new ObjectId(query._ID) };
   const db = client.db();
   const collection = db.collection(collectionName);
-  console.log("QUERY", query, update);
-  const result = await collection.updateOne(query, { $push: update });
+
+  let updateOperation;
+
+  // TODO, make this more robust and less like the smell of dead fish.
+  if (update.hasOwnProperty("metrics")) {
+    updateOperation = { $push: { metrics: update.metrics } };
+  } else if (update.hasOwnProperty("noteTemplate")) {
+    updateOperation = { $set: { noteTemplate: update.noteTemplate } };
+  } else {
+    throw new Error("Invalid update key. Must be 'metrics' or 'noteTemplate'.");
+  }
+
+  const result = await collection.updateOne(query, updateOperation);
   return result.modifiedCount;
 }
 
