@@ -6,6 +6,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { v4 as uuidv4 } from "uuid";
 
+import { TextField, FormControl, InputLabel, FormGroup } from "@mui/material";
+
 export default function PotentialFormItemDialog({
   setOpen,
   saveFormItem,
@@ -36,51 +38,48 @@ export default function PotentialFormItemDialog({
     setOpen(false);
   };
 
-  const formPotentialItemTypeSpecifier = () => {
+  const FormPotentialItemTypeSpecifier = () => {
+    const handleChange = (setter) => (event) => {
+      event.preventDefault();
+      setter(event.target.value);
+    };
+
     switch (type) {
       case "input":
       case "textarea":
         return (
-          <>
-            <label
-              className="block text-gray-700 text-sm  mb-2"
-              htmlFor="inputName"
-            >
-              Input Name
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="inputName"
-              type="text"
-              placeholder="Input Name"
-              onChange={(e) => {
-                e.preventDefault();
-                setInputName(e.target.value);
-              }}
-              value={inputName}
-            />
-          </>
+          <FormGroup>
+            <FormControl>
+              <TextField
+                id="inputName"
+                label="Input Name"
+                type="text"
+                placeholder="Input Name"
+                onChange={handleChange(setInputName)}
+                value={inputName}
+                variant="outlined"
+                fullWidth
+                sx={{ mt: 1 }}
+              />
+            </FormControl>
+          </FormGroup>
         );
       case "title":
         return (
-          <>
-            <label
-              className="block text-gray-700 text-sm  mb-2"
-              htmlFor="title"
-            >
-              Title
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="title"
-              type="text"
-              onChange={(e) => {
-                e.preventDefault();
-                setTitle(e.target.value);
-              }}
-              value={title}
-            />
-          </>
+          <FormGroup>
+            <FormControl>
+              <TextField
+                id="title"
+                type="text"
+                onChange={handleChange(setTitle)}
+                value={title}
+                variant="outlined"
+                fullWidth
+                label="Title Text"
+                sx={{ mt: 1 }}
+              />
+            </FormControl>
+          </FormGroup>
         );
       default:
         return "Input";
@@ -90,7 +89,7 @@ export default function PotentialFormItemDialog({
   return (
     <Dialog open onClose={handleClose}>
       <DialogTitle>{heading}</DialogTitle>
-      <DialogContent>{formPotentialItemTypeSpecifier()}</DialogContent>
+      <DialogContent>{FormPotentialItemTypeSpecifier()}</DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={handleSaveClick}>Add Form Item</Button>

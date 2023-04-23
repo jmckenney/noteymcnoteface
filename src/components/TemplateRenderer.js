@@ -7,6 +7,7 @@ import {
   Stack,
   Typography,
   TextField,
+  Divider,
 } from "@mui/material";
 import TemplateMetricPoint from "./template-parts/TemplateMetricPoint";
 import debounce from "lodash/debounce";
@@ -130,7 +131,7 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
                 );
               case "custom":
                 return (
-                  <Stack spacing={1} key={item.uuid}>
+                  <Stack spacing={2} key={item.uuid}>
                     <Typography variant="subtitle1">
                       {item.form.formTitle}
                     </Typography>
@@ -140,8 +141,8 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
                         case "input":
                           return (
                             <TextField
-                              key={formItem.uuid}
-                              label={formItem.label}
+                              key={formItem.id}
+                              label={formItem.name}
                               variant="outlined"
                               fullWidth
                               onChange={handleFormInputChange(
@@ -154,8 +155,8 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
                         case "textarea":
                           return (
                             <TextField
-                              key={formItem.uuid}
-                              label={formItem.label}
+                              key={formItem.id}
+                              label={formItem.name}
                               variant="outlined"
                               fullWidth
                               multiline
@@ -169,9 +170,15 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
                           );
                         case "title":
                           return (
-                            <Typography variant="subtitle" key={formItem.uuid}>
-                              {formItem.title}
-                            </Typography>
+                            <>
+                              <Typography
+                                variant="subtitle"
+                                key={formItem.uuid}
+                              >
+                                {formItem.title}
+                              </Typography>
+                              <Divider variant="middle" />
+                            </>
                           );
                         default:
                           return <></>;

@@ -1,78 +1,22 @@
 import React, { useState } from "react";
 import PageContainer from "@/components/PageContainer";
 import PotentialFormItemDialog from "@/components/PotentialFormItemDialog";
+import { potentialFormItems } from "@/components/forms/potentialFormItems";
+import { PotentialFormItem } from "@/components/forms/PotentialFormItem";
+
 import {
   Box,
   Button,
   Divider,
   FormControl,
-  InputLabel,
   TextField,
   Stack,
   Typography,
 } from "@mui/material";
-import { ArrowBackIos } from "@mui/icons-material";
+
+import AddedFormItem from "../components/forms/AddedFormItem";
 
 import { useRouter } from "next/router";
-
-const PotentialFormItem = ({ id, name }) => {
-  return (
-    <Button variant="outlined" startIcon={<ArrowBackIos />}>
-      {name}
-    </Button>
-  );
-};
-
-const AddedFormItem = ({ id, name, type, title }) => {
-  console.log("AddedFormItem", id, name, type, title);
-
-  switch (type) {
-    case "input":
-      return (
-        <Box key={id} sx={{ borderRadius: 1 }}>
-          <FormControl fullWidth>
-            <TextField
-              id={name}
-              label={name}
-              onChange={(e) => {
-                e.preventDefault();
-                setTemplateTitle(e.target.value);
-              }}
-            />
-          </FormControl>
-        </Box>
-      );
-    case "textarea":
-      return (
-        <Box key={id} sx={{ p: 1, m: 1, borderRadius: 1 }}>
-          <FormControl fullWidth>
-            <InputLabel htmlFor={name}>{name}</InputLabel>
-            <TextField
-              multiline
-              rows={4}
-              id={name}
-              placeholder={name}
-              onChange={(e) => {
-                e.preventDefault();
-                setTemplateTitle(e.target.value);
-              }}
-            />
-          </FormControl>
-        </Box>
-      );
-    case "title":
-      return (
-        <Box key={id} sx={{ p: 1, m: 1, borderRadius: 1 }}>
-          <Typography variant="h6" component="h2">
-            {title}
-          </Typography>
-        </Box>
-      );
-
-    default:
-      break;
-  }
-};
 
 export default function TemplateCreationPage() {
   const [addedFormItems, setAddedFormItems] = useState([]);
@@ -83,11 +27,8 @@ export default function TemplateCreationPage() {
     useState(undefined);
   const router = useRouter();
 
-  const [potentialFormItems, setPotentialFormItems] = useState([
-    { name: "Input", key: "input" },
-    { name: "TextArea", key: "textarea" },
-    { name: "Title", key: "title" },
-  ]);
+  const [potentialFormItemsList, setPotentialFormItemsList] =
+    useState(potentialFormItems);
 
   const handleAdd = (key) => {
     setInputFormItemDialogType(key);
@@ -152,7 +93,7 @@ export default function TemplateCreationPage() {
             <Typography variant="h6" component="h2" gutterBottom>
               Added Form Items
             </Typography>
-            <Box sx={{ mt: 4 }}>
+            <Stack sx={{ mt: 4 }} spacing={2}>
               {addedFormItems.map((formItem, index) => (
                 <AddedFormItem
                   key={formItem.id}
@@ -163,7 +104,7 @@ export default function TemplateCreationPage() {
                   title={formItem.title}
                 />
               ))}
-            </Box>
+            </Stack>
 
             {addedFormItems.length === 0 && (
               <p>
@@ -176,7 +117,7 @@ export default function TemplateCreationPage() {
               sx={{ mt: 2 }}
               disabled={addedFormItems.length === 0}
             >
-              Save Template
+              Save Form
             </Button>
           </Box>
           <Divider orientation="vertical" flexItem />
@@ -185,7 +126,7 @@ export default function TemplateCreationPage() {
               Potential Form Items
             </Typography>
             <Stack spacing={2} sx={{ textAlign: "left" }}>
-              {potentialFormItems.map((formItem) => (
+              {potentialFormItemsList.map((formItem) => (
                 <div
                   key={`div${formItem.id}`}
                   onClick={() => handleAdd(formItem.key)}

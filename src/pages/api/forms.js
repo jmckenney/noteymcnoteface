@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { ObjectId, MongoClient } from "mongodb";
 
 async function connectToDatabase() {
   const client = await MongoClient.connect(process.env.MONGODB_URI, {
@@ -25,9 +25,12 @@ async function createDocument(client, document) {
 }
 
 async function updateDocument(client, query, update) {
+  console.log("UPDATE", query, update);
+  query = { _id: new ObjectId(query._ID) };
   const db = client.db();
   const collection = db.collection(collectionName);
   const result = await collection.updateOne(query, { $set: update });
+  console.log("RESULT", result);
   return result.modifiedCount;
 }
 
@@ -65,9 +68,11 @@ export default async function handler(req, res) {
 
     case "PUT":
       try {
+        console.log("TRIED");
         const modifiedCount = await updateDocument(client, query, document);
         res.status(200).json({ modifiedCount });
       } catch (error) {
+        console.log(error);
         res.status(500).json({ error });
       }
       break;

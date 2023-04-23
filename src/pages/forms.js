@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import PageContainer from "../components/PageContainer";
-import Link from "next/link";
 import {
   List,
   ListItem,
@@ -8,7 +7,7 @@ import {
   ListItemText,
   ListItemButton,
 } from "@mui/material";
-import FolderIcon from "@mui/icons-material/Folder";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 
 export default function TemplatesPage() {
   const [forms, setForms] = useState([]);
@@ -30,7 +29,7 @@ export default function TemplatesPage() {
           <ListItem key="form.formTitle">
             <ListItemButton component="a" href={`/form/${form._id}`}>
               <ListItemIcon>
-                <FolderIcon />
+                <ChecklistIcon />
               </ListItemIcon>
               <ListItemText primary={form.formTitle} secondary={form._id} />
             </ListItemButton>
