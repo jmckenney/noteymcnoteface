@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import TemplateMetricPoint from "./template-parts/TemplateMetricPoint";
 import debounce from "lodash/debounce";
+import { useRouter } from "next/router";
 
 const updateNoteTemplateState = async (noteId, augmentedTemplate) => {
   // patch the template part of the note
@@ -39,6 +40,7 @@ const debouncedUpdateNoteTemplateState = debounce(
 export default function TemplateRenderer({ trigger = ".hcinitial" }) {
   const [template, setTemplate] = useState(null);
   const [noteId, setNoteId] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchTemplate = async () => {
@@ -87,6 +89,27 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
     fetchTemplate();
   }, []);
 
+  // Todo centralize/deduplicate this (used on home page at the moment)
+  const finalizeNote = async () => {
+    const noteResponse = await fetch(`/api/notes`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: { _ID: noteId },
+        document: { state: "FINALIZED" },
+      }),
+    });
+    if (noteResponse.ok) {
+      console.log("note finalized");
+      // refresh page (or refresh notes)
+      router.reload(window.location.pathname);
+    } else {
+      console.error("failed to finalize note");
+    }
+  };
+
   const handleFormInputChange = (templateItemIndex, formItemIndex) => {
     return (e) => {
       const augmentedTemplate = { ...template };
@@ -113,83 +136,89 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
         spacing={3}
       >
         {template ? (
-          template.templateItems.map((item, templateItemIndex) => {
-            switch (item.key) {
-              case "sessionNumber":
-                return (
-                  <Box key={item.uuid}>
-                    <Typography variant="subtitle1">Past Consults</Typography>
-                    <p>2 with me</p>
-                  </Box>
-                );
-              case "metricPointWeight":
-                return (
-                  <TemplateMetricPoint
-                    key={item.uuid}
-                    noteId={noteId}
-                  ></TemplateMetricPoint>
-                );
-              case "custom":
-                return (
-                  <Stack spacing={2} key={item.uuid}>
-                    <Typography variant="subtitle1">
-                      {item.form.formTitle}
-                    </Typography>
-                    {/* loops through the formItems and render titles, inputs, etc */}
-                    {item.form.formItems.map((formItem, formItemIndex) => {
-                      switch (formItem.type) {
-                        case "input":
-                          return (
-                            <TextField
-                              key={formItem.id}
-                              label={formItem.name}
-                              variant="outlined"
-                              fullWidth
-                              onChange={handleFormInputChange(
-                                templateItemIndex,
-                                formItemIndex
-                              )}
-                              value={formItem?.value}
-                            />
-                          );
-                        case "textarea":
-                          return (
-                            <TextField
-                              key={formItem.id}
-                              label={formItem.name}
-                              variant="outlined"
-                              fullWidth
-                              multiline
-                              rows={4}
-                              onChange={handleFormInputChange(
-                                templateItemIndex,
-                                formItemIndex
-                              )}
-                              value={formItem?.value}
-                            />
-                          );
-                        case "title":
-                          return (
-                            <>
-                              <Typography
-                                variant="subtitle"
-                                key={formItem.uuid}
-                              >
-                                {formItem.title}
-                              </Typography>
-                              <Divider variant="middle" />
-                            </>
-                          );
-                        default:
-                          return <></>;
-                      }
-                    })}
-                  </Stack>
-                );
-              default:
-                break;
-            }
-          })
+          <>
+            {template.templateItems.map((item, templateItemIndex) => {
+              switch (item.key) {
+                case "sessionNumber":
+                  return (
+                    <Box key={item.uuid}>
+                      <Typography variant="subtitle1">Past Consults</Typography>
+                      <p>2 with me</p>
+                    </Box>
+                  );
+                case "metricPointWeight":
+                  return (
+                    <TemplateMetricPoint
+                      key={item.uuid}
+                      noteId={noteId}
+                    ></TemplateMetricPoint>
+                  );
+                case "custom":
+                  return (
+                    <Stack spacing={2} key={item.uuid}>
+                      <Typography variant="subtitle1">
+                        {item.form.formTitle}
+                      </Typography>
+                      {/* loops through the formItems and render titles, inputs, etc */}
+                      {item.form.formItems.map((formItem, formItemIndex) => {
+                        switch (formItem.type) {
+                          case "input":
+                            return (
+                              <TextField
+                                key={formItem.id}
+                                label={formItem.name}
+                                variant="outlined"
+                                fullWidth
+                                onChange={handleFormInputChange(
+                                  templateItemIndex,
+                                  formItemIndex
+                                )}
+                                value={formItem?.value}
+                              />
+                            );
+                          case "textarea":
+                            return (
+                              <TextField
+                                key={formItem.id}
+                                label={formItem.name}
+                                variant="outlined"
+                                fullWidth
+                                multiline
+                                rows={4}
+                                onChange={handleFormInputChange(
+                                  templateItemIndex,
+                                  formItemIndex
+                                )}
+                                value={formItem?.value}
+                              />
+                            );
+                          case "title":
+                            return (
+                              <>
+                                <Typography
+                                  variant="subtitle"
+                                  key={formItem.uuid}
+                                >
+                                  {formItem.title}
+                                </Typography>
+                                <Divider variant="middle" />
+                              </>
+                            );
+                          default:
+                            return <></>;
+                        }
+                      })}
+                    </Stack>
+                  );
+                default:
+                  break;
+              }
+            })}
+
+            <Button variant="outlined" onClick={finalizeNote}>
+              Finalize Note
+            </Button>
+          </>
         ) : (
           <>Loading Template...</>
         )}

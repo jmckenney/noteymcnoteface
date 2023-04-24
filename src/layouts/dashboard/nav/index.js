@@ -12,7 +12,7 @@ const StyledAccount = styled("div")(({ theme }) => ({
   alignItems: "center",
   padding: theme.spacing(2, 2.5),
   borderRadius: Number(theme.shape.borderRadius) * 1.5,
-  backgroundColor: alpha(theme.palette.grey[500], 0.12),
+  backgroundColor: "#eadeff",
 }));
 
 // ----------------------------------------------------------------------
@@ -22,7 +22,7 @@ export default function Nav() {
     <>
       <Link underline="none">
         <StyledAccount>
-          <Avatar src="" alt="photoURL" />
+          <Avatar src="" alt="photoURL" sx={{ backgroundColor: "#bb91ff" }} />
 
           <Box sx={{ ml: 2 }}>
             <Typography variant="subtitle2" sx={{ color: "text.primary" }}>

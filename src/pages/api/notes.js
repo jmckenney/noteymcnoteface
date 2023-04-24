@@ -14,7 +14,11 @@ async function findDocuments(client, query = {}, limit) {
   const db = client.db();
   const collection = db.collection(collectionName);
   if (limit) {
-    return await collection.find(query).limit(limit).toArray();
+    return await collection
+      .find(query)
+      .limit(limit)
+      .sort({ created: -1 })
+      .toArray();
   } else {
     return await collection.find(query).toArray();
   }
@@ -46,8 +50,12 @@ async function patchDocument(client, query, update) {
     updateOperation = { $push: { metrics: update.metrics } };
   } else if (update.hasOwnProperty("noteTemplate")) {
     updateOperation = { $set: { noteTemplate: update.noteTemplate } };
+  } else if (update.hasOwnProperty("state")) {
+    updateOperation = { $set: { state: update.state } };
   } else {
-    throw new Error("Invalid update key. Must be 'metrics' or 'noteTemplate'.");
+    throw new Error(
+      "Invalid update key. Must be 'metrics' or 'noteTemplate' or 'state'."
+    );
   }
 
   const result = await collection.updateOne(query, updateOperation);
