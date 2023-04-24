@@ -150,11 +150,7 @@ export default function ConsultNote({ note }) {
               />
             </Stack>
             <Typography variant="body">
-              In the health coaching follow-up session, the member discussed
-              their struggles in reaching 10,000 steps daily and considered ways
-              to make physical activity more enjoyable. The wellness plan
-              includes goals such as limiting fast food, achieving daily step
-              targets, and exploring various activities to increase movement.
+              {note.summary ? note.summary : "Summary being created..."}
             </Typography>
           </CardContent>
           <Collapse in={expanded} timeout="auto" unmountOnExit>

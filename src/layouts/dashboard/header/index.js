@@ -5,14 +5,6 @@ import { bgBlur } from "../../../utils/cssStyles";
 import AccountPopover from "./AccountPopover";
 import NotificationsPopover from "./NotificationsPopover";
 
-// ----------------------------------------------------------------------
-
-const NAV_WIDTH = 280;
-
-const HEADER_MOBILE = 64;
-
-const HEADER_DESKTOP = 72;
-
 const StyledRoot = styled(AppBar)(({ theme }) => ({
   ...bgBlur({ color: theme.palette.background.default }),
   boxShadow: "none",
@@ -22,11 +14,8 @@ const StyledRoot = styled(AppBar)(({ theme }) => ({
 }));
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  minHeight: HEADER_MOBILE,
-  [theme.breakpoints.up("lg")]: {
-    minHeight: HEADER_DESKTOP,
-    padding: theme.spacing(0, 5),
-  },
+  minHeight: 30,
+  padding: theme.spacing(0, 5),
 }));
 
 // ----------------------------------------------------------------------

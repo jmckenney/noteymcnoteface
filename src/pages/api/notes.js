@@ -1,4 +1,22 @@
 import { ObjectId, MongoClient } from "mongodb";
+import { Configuration, OpenAIApi } from "openai";
+
+const configuration = new Configuration({
+  apiKey: process.env.OPEN_AI_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+const getValueProperties = (obj) => {
+  if (!obj || typeof obj !== "object") {
+    return [];
+  }
+
+  if (obj.hasOwnProperty("value") && typeof obj.value === "string") {
+    return [obj.value];
+  }
+
+  return Object.values(obj).flatMap(getValueProperties);
+};
 
 async function connectToDatabase() {
   const client = await MongoClient.connect(process.env.MONGODB_URI, {
@@ -49,7 +67,37 @@ async function patchDocument(client, query, update) {
   if (update.hasOwnProperty("metrics")) {
     updateOperation = { $push: { metrics: update.metrics } };
   } else if (update.hasOwnProperty("noteTemplate")) {
-    updateOperation = { $set: { noteTemplate: update.noteTemplate } };
+    const valueTexts = getValueProperties(update.noteTemplate);
+    try {
+      const completion = await openai.createCompletion({
+        model: "text-davinci-003",
+        max_tokens: 1000,
+        temperature: 0.2,
+        prompt: `
+      Create a short summary of the patient's goals and motivations. Include
+      and details about hospital stays or other medical history that may be
+      relevant to the patient's current situation.
+
+      ${JSON.stringify(valueTexts)}
+      `,
+      });
+      console.log(completion.data.choices[0].text);
+
+      updateOperation = {
+        $set: {
+          noteTemplate: update.noteTemplate,
+          // summary: "summary text",
+          summary: completion.data.choices[0].text,
+        },
+      };
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response.status);
+        console.log(error.response.data);
+      } else {
+        console.log(error.message);
+      }
+    }
   } else if (update.hasOwnProperty("state")) {
     updateOperation = { $set: { state: update.state } };
   } else {

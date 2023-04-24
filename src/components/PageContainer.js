@@ -10,10 +10,10 @@ export default function PageContainer({ children, title }) {
         <Grid item xs={12}>
           <Header />
         </Grid>
-        <Grid item xs={4} mt={8}>
+        <Grid item xs={3} mt={8}>
           <Nav />
         </Grid>
-        <Grid item xs={8} mt={8}>
+        <Grid item xs={9} mt={8}>
           <Typography variant="h4" sx={{ mb: 5 }}>
             {title}
           </Typography>
