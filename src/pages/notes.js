@@ -46,7 +46,7 @@ export default function Home() {
         </Tabs>
       </Box>
       <Grid container spacing={3}>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={4}>
           <Typography variant="h5" sx={{ mb: 3 }}>
             Plans
           </Typography>
@@ -78,7 +78,7 @@ export default function Home() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={12} sm={8}>
           <Stack spacing={3}>
             <Button variant="outlined" onClick={() => setOpen(true)}>
               Initial Consult Note
