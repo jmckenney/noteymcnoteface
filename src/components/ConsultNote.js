@@ -21,22 +21,15 @@ import { styled } from "@mui/material/styles";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useRouter } from "next/router";
 
+import CoolGraph from "./CoolGraph/CoolGraph.js";
+
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 const formatter = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
 });
-
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
 
 const updateNoteTemplateState = async (noteId, augmentedTemplate) => {
   // patch the template part of the note
@@ -181,9 +174,25 @@ export default function ConsultNote({ note }) {
             }
           />
           <CardContent>
-            {/* template renderer */}
-
             <Stack spacing={3}>
+              {/* summary */}
+              <Box>
+                <Typography
+                  variant="subtitle1"
+                  display="flex"
+                  onClick={handleExpandClick}
+                >
+                  Member Summary
+                  <ExpandMoreIcon
+                    sx={{ transform: expanded ? "rotate(180deg)" : "none" }}
+                  />
+                </Typography>
+              </Box>
+              <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <Box>
+                  <CoolGraph />
+                </Box>
+              </Collapse>
               {template ? (
                 template.templateItems.map((item, templateItemIndex) => {
                   switch (item.key) {
