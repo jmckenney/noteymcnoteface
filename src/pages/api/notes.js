@@ -112,6 +112,11 @@ async function patchDocument(client, query, update) {
       update.noteTemplate
     );
     try {
+      /**
+       * for now, don't use the openai api to summarize the template
+       * on every template item edit. Instead, ai summarize when
+       * the state changes to FINALIZED.
+       */
       // const completion = await openai.createCompletion({
       //   model: "text-davinci-003",
       //   max_tokens: 1000,
@@ -144,7 +149,40 @@ async function patchDocument(client, query, update) {
       }
     }
   } else if (update.hasOwnProperty("state")) {
-    updateOperation = { $set: { state: update.state } };
+    // get the full note from the database to summarize
+    const existing = await findDocuments(client, query, 1);
+    // Get a shorter prompt summary by extracting most of the important values
+    const valueTexts = getValueProperties(existing.noteTemplate);
+    try {
+      const completion = await openai.createCompletion({
+        model: "text-davinci-003",
+        max_tokens: 1000,
+        temperature: 0.2,
+        prompt: `
+      Create a short summary of the patient's goals and motivations. Include
+      and details about hospital stays or other medical history that may be
+      relevant to the patient's current situation.
+
+      ${JSON.stringify(valueTexts)}
+      `,
+      });
+      console.log(completion.data.choices[0].text);
+
+      updateOperation = {
+        $set: {
+          state: "IN_PROGRESS",
+          // state: update.state,
+          summary: completion.data.choices[0].text,
+        },
+      };
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response.status);
+        console.log(error.response.data);
+      } else {
+        console.log(error.message);
+      }
+    }
   } else {
     throw new Error(
       "Invalid update key. Must be 'metrics' or 'noteTemplate' or 'state'."

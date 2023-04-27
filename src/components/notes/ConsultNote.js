@@ -23,6 +23,8 @@ import Markdown from "@/components/Markdown";
 import { formatTemplateOutputToMarkdown } from "@/components/templates/formatTemplateOutputToMarkdown";
 import SyncIcon from "@mui/icons-material/Sync";
 import Fade from "@mui/material/Fade";
+import Lottie from "lottie-web";
+import AiProcessing from "@/components/animations/ai.json";
 
 import CoolGraph from "../CoolGraph/CoolGraph.js";
 
@@ -43,8 +45,24 @@ export default function ConsultNote({ note }) {
   const [expandedMetrics, setExpandedMetrics] = React.useState(false);
   const [template, setTemplate] = useState(note.noteTemplate);
   const [saving, setSaving] = useState(false);
+  const [llmProcessing, setLlmProcessing] = useState(false);
   const [expandedCustomItems, setExpandedCustomItems] = useState({});
   const router = useRouter();
+  const lottieRef = React.useRef();
+
+  useEffect(() => {
+    Lottie.loadAnimation({
+      container: lottieRef.current,
+      renderer: "svg",
+      loop: true,
+      autoplay: true,
+      animationData: AiProcessing,
+    });
+
+    return () => {
+      Lottie.destroy();
+    };
+  }, []);
 
   const handleExpandMemberAiSummary = () => {
     setExpandedMemberSummary(!expandedMemberSummary);
@@ -100,6 +118,7 @@ export default function ConsultNote({ note }) {
 
   // Todo centralize/deduplicate this (used on home page at the moment)
   const finalizeNote = async () => {
+    setLlmProcessing(true);
     const noteResponse = await fetch(`/api/notes`, {
       method: "PATCH",
       headers: {
@@ -110,6 +129,7 @@ export default function ConsultNote({ note }) {
         document: { state: "FINALIZED" },
       }),
     });
+    setLlmProcessing(false);
     if (noteResponse.ok) {
       console.log("note finalized");
       // refresh page (or refresh notes)
@@ -357,7 +377,6 @@ export default function ConsultNote({ note }) {
         <SyncIcon
           sx={{
             position: "fixed",
-            right: 0,
             top: "50%",
             right: "50%",
             transform: "translate(50%, -50%)",
@@ -372,6 +391,20 @@ export default function ConsultNote({ note }) {
                 transform: "rotate(0deg)",
               },
             },
+          }}
+        />
+      </Fade>
+      <Fade in={llmProcessing} timeout={1000}>
+        <Box
+          ref={lottieRef}
+          sx={{
+            position: "fixed",
+            top: "50%",
+            right: "50%",
+            transform: "translate(50%, -50%)",
+            zIndex: 1000,
+            width: "200px",
+            height: "200px",
           }}
         />
       </Fade>
