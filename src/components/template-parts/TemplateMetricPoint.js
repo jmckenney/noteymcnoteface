@@ -2,8 +2,6 @@
 import React, { useState } from "react";
 import { Box, Button, Stack, Typography, TextField } from "@mui/material";
 
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
 export default function TemplateMetricPoint({ noteId }) {
   const [weight, setWeight] = useState(0);
   const handleSave = async () => {

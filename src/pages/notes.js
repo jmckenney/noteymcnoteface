@@ -17,7 +17,7 @@ import {
 import Header from "@/layouts/dashboard/header";
 import Nav from "@/layouts/dashboard/nav";
 import TemplateRenderer from "@/components/TemplateRenderer";
-import NoteList from "@/components/NoteList";
+import NoteList from "@/components/notes/NoteList";
 import { useState } from "react";
 import PageContainer from "@/components/PageContainer";
 

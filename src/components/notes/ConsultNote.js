@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Avatar,
   Button,
@@ -8,20 +8,20 @@ import {
   Stack,
   Typography,
   TextField,
-  CardActionArea,
   CardContent,
   Chip,
   Collapse,
   Divider,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import TemplateMetricPoint from "./template-parts/TemplateMetricPoint";
+import TemplateMetricPoint from "../template-parts/TemplateMetricPoint";
 import debounce from "lodash/debounce";
-import { styled } from "@mui/material/styles";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useRouter } from "next/router";
+import Markdown from "@/components/Markdown";
+import { formatTemplateOutputToMarkdown } from "@/components/templates/formatTemplateOutputToMarkdown";
 
-import CoolGraph from "./CoolGraph/CoolGraph.js";
+import CoolGraph from "../CoolGraph/CoolGraph.js";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -31,39 +31,47 @@ const formatter = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
 });
 
-const updateNoteTemplateState = async (noteId, augmentedTemplate) => {
-  // patch the template part of the note
-  const noteResponse = await fetch(`/api/notes`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query: { _ID: noteId },
-      document: { noteTemplate: augmentedTemplate },
-    }),
-  });
-  if (noteResponse.ok) {
-    console.log("template saved to note");
-  } else {
-    console.error("failed to save template to note");
-  }
-};
-
-const debouncedUpdateNoteTemplateState = debounce(
-  updateNoteTemplateState,
-  1000
-);
-
 export default function ConsultNote({ note }) {
   const [mode, setMode] = useState("view");
-  const [expanded, setExpanded] = React.useState(false);
+  const [expandedFullNote, setExpandedFullNote] = React.useState(false);
+  const [expandedMemberSummary, setExpandedMemberSummary] =
+    React.useState(false);
   const [template, setTemplate] = useState(note.noteTemplate);
   const router = useRouter();
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+  const handleExpandMemberSummaryClick = () => {
+    setExpandedMemberSummary(!expandedMemberSummary);
   };
+
+  const handleExpandFullNote = () => {
+    setExpandedFullNote(!expandedFullNote);
+  };
+
+  const updateNoteDetails = useCallback(async () => {
+    const noteResponse = await fetch(`/api/notes`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: { _ID: note._id },
+        document: {
+          noteTemplate: template,
+          markdownOutputOfTemplate: formatTemplateOutputToMarkdown(template),
+        },
+      }),
+    });
+    if (noteResponse.ok) {
+      console.log("template saved to note");
+    } else {
+      console.error("failed to save template to note");
+    }
+  }, []);
+
+  const debouncedUpdateNoteTemplateState = useCallback(
+    debounce(updateNoteDetails, 1000),
+    []
+  );
 
   const handleFormInputChange = (templateItemIndex, formItemIndex) => {
     return (e) => {
@@ -72,10 +80,14 @@ export default function ConsultNote({ note }) {
         formItemIndex
       ].value = e.target.value;
       setTemplate(augmentedTemplate);
-      debouncedUpdateNoteTemplateState(note._id, augmentedTemplate);
+      // debouncedUpdateNoteTemplateState(note._id, augmentedTemplate);
       console.log(augmentedTemplate);
     };
   };
+
+  useEffect(() => {
+    debouncedUpdateNoteTemplateState();
+  }, [template, debouncedUpdateNoteTemplateState]);
 
   // Todo centralize/deduplicate this (used on home page at the moment)
   const finalizeNote = async () => {
@@ -99,9 +111,9 @@ export default function ConsultNote({ note }) {
   };
 
   return (
-    <Card key={note._id}>
+    <Card key={note._id} onDoubleClick={() => setMode("edit")}>
       {mode === "view" ? (
-        <CardActionArea onClick={() => setMode("edit")}>
+        <>
           <CardHeader
             avatar={<Avatar sx={{ bgcolor: "#8D42C8" }}>LS</Avatar>}
             action={
@@ -142,23 +154,45 @@ export default function ConsultNote({ note }) {
                 size="small"
               />
             </Stack>
-            <Typography variant="body">
-              {note.summary ? note.summary : "Summary being created..."}
-            </Typography>
+            <Stack spacing={2}>
+              <Typography variant="body">
+                {note.summary ? (
+                  <>
+                    <strong>AI Summary:</strong> {note.summary}
+                  </>
+                ) : (
+                  "Summary being created..."
+                )}
+              </Typography>
+              <Box>
+                <Typography
+                  variant="subtitle1"
+                  display="flex"
+                  onClick={handleExpandFullNote}
+                >
+                  See Full Note
+                  <ExpandMoreIcon
+                    sx={{
+                      transform: expandedFullNote ? "rotate(180deg)" : "none",
+                    }}
+                  />
+                </Typography>
+              </Box>
+            </Stack>
           </CardContent>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <Collapse in={expandedFullNote} timeout="auto" unmountOnExit>
             <CardContent>
               <Typography paragraph>More Info:</Typography>
               <Typography paragraph>
-                lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in
+                <Markdown>
+                  {note.markdownOutputOfTemplate ||
+                    "Full note being created..."}
+                </Markdown>
               </Typography>
             </CardContent>
           </Collapse>
-        </CardActionArea>
+          {/* </CardActionArea> */}
+        </>
       ) : (
         <>
           <CardHeader
@@ -180,15 +214,19 @@ export default function ConsultNote({ note }) {
                 <Typography
                   variant="subtitle1"
                   display="flex"
-                  onClick={handleExpandClick}
+                  onClick={handleExpandMemberSummaryClick}
                 >
                   Member Summary
                   <ExpandMoreIcon
-                    sx={{ transform: expanded ? "rotate(180deg)" : "none" }}
+                    sx={{
+                      transform: expandedMemberSummary
+                        ? "rotate(180deg)"
+                        : "none",
+                    }}
                   />
                 </Typography>
               </Box>
-              <Collapse in={expanded} timeout="auto" unmountOnExit>
+              <Collapse in={expandedMemberSummary} timeout="auto" unmountOnExit>
                 <Box>
                   <CoolGraph />
                 </Box>
@@ -238,19 +276,21 @@ export default function ConsultNote({ note }) {
                                   );
                                 case "textarea":
                                   return (
-                                    <TextField
-                                      key={formItem.id}
-                                      label={formItem.name}
-                                      variant="outlined"
-                                      fullWidth
-                                      multiline
-                                      rows={4}
-                                      onChange={handleFormInputChange(
-                                        templateItemIndex,
-                                        formItemIndex
-                                      )}
-                                      value={formItem?.value}
-                                    />
+                                    <>
+                                      <TextField
+                                        key={formItem.id}
+                                        label={formItem.name}
+                                        variant="outlined"
+                                        fullWidth
+                                        multiline
+                                        rows={4}
+                                        onChange={handleFormInputChange(
+                                          templateItemIndex,
+                                          formItemIndex
+                                        )}
+                                        value={formItem?.value}
+                                      />
+                                    </>
                                   );
                                 case "title":
                                   return (

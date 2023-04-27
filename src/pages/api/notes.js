@@ -6,6 +6,13 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
+/**
+ * Process the template to get values to send to openai
+ * completion api.
+ *
+ * @param {*} obj
+ * @returns string[]
+ */
 const getValueProperties = (obj) => {
   if (!obj || typeof obj !== "object") {
     return [];
@@ -17,6 +24,39 @@ const getValueProperties = (obj) => {
 
   return Object.values(obj).flatMap(getValueProperties);
 };
+
+/**
+ * Generate a flattened text-only view of the results of the form.
+ * ToDo: allow on front end for snippets that don't need form...
+ * @param {*} obj
+ * @returns string
+ */
+function flattenTemplateObjectwithValues(obj) {
+  let result = "";
+
+  function process(obj, prefix = "") {
+    for (const key in obj) {
+      if (typeof obj[key] === "object" && !Array.isArray(obj[key])) {
+        process(obj[key], prefix + key + ": ");
+      } else if (Array.isArray(obj[key])) {
+        obj[key].forEach((item) => process(item));
+      } else {
+        if (
+          key === "name" ||
+          key === "formTitle" ||
+          key === "formDescription" ||
+          key === "title" ||
+          key === "value"
+        ) {
+          result += prefix + key + ": " + obj[key] + "\n\n";
+        }
+      }
+    }
+  }
+
+  process(obj);
+  return result;
+}
 
 async function connectToDatabase() {
   const client = await MongoClient.connect(process.env.MONGODB_URI, {
@@ -68,26 +108,31 @@ async function patchDocument(client, query, update) {
     updateOperation = { $push: { metrics: update.metrics } };
   } else if (update.hasOwnProperty("noteTemplate")) {
     const valueTexts = getValueProperties(update.noteTemplate);
+    const textSummaryOfFullTemplate = flattenTemplateObjectwithValues(
+      update.noteTemplate
+    );
     try {
-      const completion = await openai.createCompletion({
-        model: "text-davinci-003",
-        max_tokens: 1000,
-        temperature: 0.2,
-        prompt: `
-      Create a short summary of the patient's goals and motivations. Include
-      and details about hospital stays or other medical history that may be
-      relevant to the patient's current situation.
+      // const completion = await openai.createCompletion({
+      //   model: "text-davinci-003",
+      //   max_tokens: 1000,
+      //   temperature: 0.2,
+      //   prompt: `
+      // Create a short summary of the patient's goals and motivations. Include
+      // and details about hospital stays or other medical history that may be
+      // relevant to the patient's current situation.
 
-      ${JSON.stringify(valueTexts)}
-      `,
-      });
-      console.log(completion.data.choices[0].text);
+      // ${JSON.stringify(valueTexts)}
+      // `,
+      // });
+      // console.log(completion.data.choices[0].text);
 
       updateOperation = {
         $set: {
           noteTemplate: update.noteTemplate,
           // summary: "summary text",
-          summary: completion.data.choices[0].text,
+          // summary: completion.data.choices[0].text,
+          textOutputOfForm: textSummaryOfFullTemplate,
+          markdownOutputOfTemplate: update.markdownOutputOfTemplate,
         },
       };
     } catch (error) {
