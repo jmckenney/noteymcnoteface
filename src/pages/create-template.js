@@ -5,20 +5,24 @@ import { useRouter } from "next/router";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
-  Divider,
+  Container,
   FormControl,
   Grid,
-  IconButton,
+  DialogActions,
   InputLabel,
   MenuItem,
   Select,
   TextField,
   Typography,
   Stack,
+  Dialog,
+  DialogTitle,
+  IconButton,
 } from "@mui/material";
 import ArrowBackIos from "@mui/icons-material/ArrowBackIos";
+import CloseIcon from "@mui/icons-material/Close";
+
+import CreateForm from "@/components/forms/CreateForm";
 
 const PotentialTemplateItem = ({ id, name, key }) => {
   return (
@@ -41,46 +45,76 @@ export default function TemplateCreationPage() {
   const [templateTitle, setTemplateTitle] = useState("");
   const [templateTrigger, setTemplateTrigger] = useState("");
   const [templateDescription, setTemplateDescription] = useState("");
-
-  const [forms, setForms] = useState([]);
+  const [showFormCreator, setShowFormCreator] = useState(false);
+  const [
+    templateItemToAssociateNewFormWith,
+    setTemplateItemToAssociateNewFormWith,
+  ] = useState(undefined);
 
   const router = useRouter();
 
+  // State variable to hold the list of forms available from the database
+  const [forms, setForms] = useState([]);
+
+  // Get the forms available from the database
   useEffect(() => {
-    const fetchTemplates = async () => {
+    const fetchForms = async () => {
       const response = await fetch("/api/forms");
       const forms = await response.json();
       setForms(forms);
     };
-    fetchTemplates();
-  }, []);
+    fetchForms();
+  }, [addedTemplateItems]);
 
   const AddedTemplateItems = ({ id, name, index, uuid, formDbId = "" }) => {
     // TODO enhance this to not be dumb:)
     const formChooserOptions = id === 5 ? forms : null;
     return (
-      <Box sx={{ p: 1, m: 1, borderRadius: 1 }}>
+      <>
         <Typography>{name}</Typography>
         {formChooserOptions && (
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel>Custom Form To Use</InputLabel>
-            <Select
-              name={uuid}
-              onChange={(e) => {
-                handleFormSelection(uuid, e.target.value);
-              }}
-              label="Custom Form To Use"
-              value={formDbId}
-            >
-              {forms.map((form) => (
-                <MenuItem key={form._id} value={form._id}>
-                  {form.formTitle}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Grid container alignItems="center">
+            {forms.length > 0 && (
+              <>
+                <Grid item>
+                  <FormControl fullWidth sx={{ mt: 2, minWidth: 200 }}>
+                    <InputLabel>Custom Form To Use</InputLabel>
+                    <Select
+                      name={uuid}
+                      onChange={(e) => {
+                        handleFormSelection(uuid, e.target.value);
+                      }}
+                      label="Custom Form To Use"
+                      value={formDbId}
+                    >
+                      {forms.map((form) => (
+                        <MenuItem key={form._id} value={form._id}>
+                          {form.formTitle}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item sx={{ p: 2 }}>
+                  Or
+                </Grid>
+              </>
+            )}
+            <Grid item>
+              <Button
+                onClick={() => {
+                  // store the uuid of the item where the new form will be associated
+                  setTemplateItemToAssociateNewFormWith(uuid);
+                  setShowFormCreator(true);
+                }}
+                variant="outlined"
+              >
+                Create New Form
+              </Button>
+            </Grid>
+          </Grid>
         )}
-      </Box>
+      </>
     );
   };
 
@@ -182,7 +216,7 @@ export default function TemplateCreationPage() {
           <Typography variant="h6" component="h2" gutterBottom>
             Added Template Items
           </Typography>
-          <Box sx={{ mt: 2 }}>
+          <Stack sx={{ mt: 2 }} spacing={2}>
             {addedTemplateItems.map((templateItem, index) => (
               <AddedTemplateItems
                 key={templateItem.uuid}
@@ -193,7 +227,7 @@ export default function TemplateCreationPage() {
                 formDbId={templateItem.formDbId || ""}
               />
             ))}
-          </Box>
+          </Stack>
           <Button
             onClick={saveTemplate}
             variant="outlined"
@@ -223,6 +257,35 @@ export default function TemplateCreationPage() {
           </Stack>
         </Grid>
       </Grid>
+
+      <Dialog open={showFormCreator} onClose={() => console.log("hello")}>
+        <DialogTitle sx={{ m: 0, p: 2 }}>
+          <IconButton
+            aria-label="close"
+            onClick={() => setShowFormCreator(false)}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <Container sx={{ pt: 2 }}>
+          <CreateForm
+            handleSavedForm={(formDbId) => {
+              setShowFormCreator(false);
+              handleFormSelection(templateItemToAssociateNewFormWith, formDbId);
+            }}
+          ></CreateForm>
+        </Container>
+
+        <DialogActions>
+          <Button onClick={() => setShowFormCreator(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </PageContainer>
   );
 }
