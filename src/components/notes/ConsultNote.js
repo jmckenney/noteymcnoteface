@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import ReactDom from "react-dom";
 import {
   Avatar,
   Button,
@@ -30,6 +31,7 @@ import CoolGraph from "../CoolGraph/CoolGraph.js";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import NoteAreaExpanderHeading from "./NoteAreaExpanderHeading";
+import { useAnchorContext } from "@/hooks/AnchorProvider";
 
 const formatter = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
@@ -49,6 +51,7 @@ export default function ConsultNote({ note }) {
   const [expandedCustomItems, setExpandedCustomItems] = useState({});
   const router = useRouter();
   const lottieRef = React.useRef();
+  const { isMounted, anchorRef } = useAnchorContext();
 
   useEffect(() => {
     Lottie.loadAnimation({
@@ -139,9 +142,27 @@ export default function ConsultNote({ note }) {
     }
   };
 
-  return (
+  const ComponentToRenderOrPortal = () => (
     <>
-      <Card key={note._id} onDoubleClick={() => setMode("edit")}>
+      <Card
+        key={note._id}
+        onDoubleClick={() => setMode("edit")}
+        sx={
+          mode === "edit" && anchorRef.current
+            ? {
+                position: "absolute",
+                left: "98%",
+                top: "-12px",
+                width: "90%",
+                pointerEvents: "all",
+                maxHeight: "600px",
+                overflowY: "scroll",
+                boxShadow: 6,
+                zIndex: -1,
+              }
+            : {}
+        }
+      >
         {mode === "view" ? (
           <>
             <CardHeader
@@ -409,5 +430,19 @@ export default function ConsultNote({ note }) {
         />
       </Fade>
     </>
+  );
+
+  if (
+    !isMounted ||
+    !anchorRef.current ||
+    !(anchorRef.current instanceof HTMLElement) ||
+    mode !== "edit"
+  ) {
+    return <ComponentToRenderOrPortal />;
+  }
+
+  return ReactDom.createPortal(
+    <ComponentToRenderOrPortal />,
+    anchorRef.current
   );
 }
