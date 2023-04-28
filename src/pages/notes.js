@@ -20,12 +20,18 @@ import TemplateRenderer from "@/components/TemplateRenderer";
 import NoteList from "@/components/notes/NoteList";
 import { useState } from "react";
 import PageContainer from "@/components/PageContainer";
+import MockVideoConsultWindow from "@/components/MockVideoConsultWindow";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
   const [filterBy, setFilterBy] = useState("IN_PROGRESS");
+  const [showVideoConsult, setShowVideoConsult] = useState(false);
   return (
-    <PageContainer title="Tristin McNotey">
+    <PageContainer
+      title="Tristin McNotey"
+      videoButton
+      onVideoButtonClick={() => setShowVideoConsult(!showVideoConsult)}
+    >
       <Box sx={{ bgcolor: "background.paper", mb: 3 }}>
         <Tabs
           onChange={() => console.log("changed")}
@@ -104,6 +110,7 @@ export default function Home() {
           </Stack>
         </Grid>
       </Grid>
+      {showVideoConsult && <MockVideoConsultWindow />}
     </PageContainer>
   );
 }

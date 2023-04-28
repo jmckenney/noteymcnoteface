@@ -381,7 +381,7 @@ export default function ConsultNote({ note }) {
             right: "50%",
             transform: "translate(50%, -50%)",
             zIndex: 1000,
-            color: "green",
+            color: "#12B76A",
             animation: "spin 2s linear infinite",
             "@keyframes spin": {
               "0%": {

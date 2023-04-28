@@ -45,7 +45,7 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
   useEffect(() => {
     const fetchTemplate = async () => {
       // hard coding template id for now for .hcinitial
-      const response = await fetch(`/api/templates/643dbafd838bdd512908e06c`);
+      const response = await fetch(`/api/templates/644b06bbdcbd9f2e0b11e5f6`);
       const templateJson = await response.json();
 
       // Get all the subforms for this template and augment the template with them.
@@ -54,7 +54,7 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
         templateJson.templateItems
           .filter((item) => item.key === "custom")
           .map(async (item) => {
-            const response = await fetch(`/api/forms/${item.formUuid}`);
+            const response = await fetch(`/api/forms/${item.formDbId}`);
             const form = await response.json();
             // augment the form with the uuid of the template item
             // TODO, make this more explicit. This is only working because filter and map are passing
