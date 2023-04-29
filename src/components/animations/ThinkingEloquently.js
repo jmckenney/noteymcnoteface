@@ -4,7 +4,7 @@ import { Box, Fade } from "@mui/material";
 import AiProcessing from "@/components/animations/ai.json";
 import Lottie from "lottie-web";
 
-export default function ThinkingEloquently({ show }) {
+function ThinkingEloquently({ show }) {
   const lottieRef = React.useRef();
   useEffect(() => {
     Lottie.loadAnimation({
@@ -36,3 +36,7 @@ export default function ThinkingEloquently({ show }) {
     </Fade>
   );
 }
+
+export default React.memo(ThinkingEloquently, (prevProps, nextProps) => {
+  return prevProps.show === nextProps.show;
+});
