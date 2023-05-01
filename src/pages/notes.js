@@ -85,7 +85,7 @@ export default function Home() {
         <Grid item xs={12} sm={8}>
           <Stack spacing={3}>
             <Button variant="outlined" onClick={() => setOpen(true)}>
-              Initial Consult Note
+              Create New Note
             </Button>
             {open && <TemplateRenderer>Rendered form here</TemplateRenderer>}
 

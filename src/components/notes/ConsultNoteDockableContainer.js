@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import ReactDom from "react-dom";
-import ConsultNote from "./ConsultNote";
+import ConsultNoteSummary from "./ConsultNoteSummary";
 import ConsultNoteEditor from "./ConsultNoteEditor";
 import { useAnchorContext } from "@/hooks/AnchorProvider";
 
@@ -21,7 +21,7 @@ export default function ConsultNoteDockableContainer({ note, view = "view" }) {
     return mode === "edit" ? (
       <ConsultNoteEditor note={note} anchorRef={anchorRef} />
     ) : (
-      <ConsultNote
+      <ConsultNoteSummary
         note={note}
         anchorRef={anchorRef}
         mode={mode}

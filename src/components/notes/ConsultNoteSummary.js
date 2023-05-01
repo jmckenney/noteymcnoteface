@@ -2,7 +2,7 @@ import React from "react";
 import { Card } from "@mui/material";
 import ConsultSummaryView from "./ConsultSummaryView";
 
-export default function ConsultNote({ note, mode, setMode, anchorRef }) {
+export default function ConsultNoteSummary({ note, mode, setMode, anchorRef }) {
   const [expandedFullNote, setExpandedFullNote] = React.useState(false);
 
   const handleExpandFullNoteSummary = () => {
