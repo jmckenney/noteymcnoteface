@@ -1,36 +1,29 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import ReactDom from "react-dom";
-import ConsultNoteSummary from "./ConsultNoteSummary";
 import ConsultNoteEditor from "./ConsultNoteEditor";
 import { useAnchorContext } from "@/hooks/AnchorProvider";
 
-export default function ConsultNoteDockableContainer({ note, view = "view" }) {
-  const { isMounted, anchorRef } = useAnchorContext();
-  const [mode, setMode] = useState(view);
+export default function ConsultNoteDockableContainer({ note }) {
+  const { isDraggableVideoConsultMounted, draggableVideoConsultAnchorRef } =
+    useAnchorContext();
 
-  const shouldShowInlineInsteadOfDocking = useCallback(() => {
+  const shouldDockToVideoEditor = useCallback(() => {
     return (
-      !isMounted ||
-      !anchorRef.current ||
-      !(anchorRef.current instanceof HTMLElement) ||
-      mode !== "edit"
+      isDraggableVideoConsultMounted &&
+      draggableVideoConsultAnchorRef.current &&
+      draggableVideoConsultAnchorRef.current instanceof HTMLElement
     );
-  }, [isMounted, anchorRef, mode]);
+  }, [isDraggableVideoConsultMounted, draggableVideoConsultAnchorRef]);
 
-  const viewVsEdit = useCallback(() => {
-    return mode === "edit" ? (
-      <ConsultNoteEditor note={note} anchorRef={anchorRef} />
-    ) : (
-      <ConsultNoteSummary
+  return shouldDockToVideoEditor() ? (
+    ReactDom.createPortal(
+      <ConsultNoteEditor
         note={note}
-        anchorRef={anchorRef}
-        mode={mode}
-        setMode={setMode}
-      />
-    );
-  }, [mode, note, anchorRef]);
-
-  return shouldShowInlineInsteadOfDocking()
-    ? viewVsEdit()
-    : ReactDom.createPortal(viewVsEdit(), anchorRef.current);
+        draggableVideoConsultAnchorRef={draggableVideoConsultAnchorRef}
+      />,
+      draggableVideoConsultAnchorRef.current
+    )
+  ) : (
+    <ConsultNoteEditor note={note} />
+  );
 }

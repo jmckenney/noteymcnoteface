@@ -34,7 +34,6 @@ function NavItem({ item }) {
 
   return (
     <StyledNavItem
-      to={path}
       sx={{
         "&.active": {
           color: "text.primary",

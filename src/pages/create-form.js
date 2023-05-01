@@ -1,7 +1,7 @@
 import CreateForm from "../components/forms/CreateForm";
 
 import React from "react";
-import PageContainer from "@/components/PageContainer";
+import PageContainer from "@/layouts/dashboard/DashboardLayout";
 
 import { useRouter } from "next/router";
 

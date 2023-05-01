@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useContext, useCallback, useState } from "react";
 import {
   Button,
   Box,
@@ -20,8 +20,12 @@ import ConsultNoteCardHeader from "./ConsultNoteCardHeader";
 import CoolGraph from "../CoolGraph/CoolGraph.js";
 import NoteAreaExpanderHeading from "./NoteAreaExpanderHeading";
 import ThinkingEloquently from "../animations/ThinkingEloquently";
+import NoteContext from "@/hooks/NoteContext";
 
-export default function ConsultNoteEditor({ note, anchorRef }) {
+export default function ConsultNoteEditor({
+  note,
+  draggableVideoConsultAnchorRef,
+}) {
   const [expandedMemberSummary, setExpandedMemberSummary] =
     React.useState(false);
   const [expandedMetrics, setExpandedMetrics] = React.useState(false);
@@ -30,6 +34,7 @@ export default function ConsultNoteEditor({ note, anchorRef }) {
   const [llmProcessing, setLlmProcessing] = useState(false);
   const [expandedCustomItems, setExpandedCustomItems] = useState({});
   const router = useRouter();
+  const { setNoteBeingEdited } = useContext(NoteContext);
 
   const handleExpandMemberSummary = useCallback(() => {
     setExpandedMemberSummary(!expandedMemberSummary);
@@ -98,8 +103,7 @@ export default function ConsultNoteEditor({ note, anchorRef }) {
     setLlmProcessing(false);
     if (noteResponse.ok) {
       console.log("note finalized");
-      // refresh page (or refresh notes)
-      router.reload(window.location.pathname);
+      setNoteBeingEdited(null);
     } else {
       console.error("failed to finalize note");
     }
@@ -110,7 +114,7 @@ export default function ConsultNoteEditor({ note, anchorRef }) {
       <Card
         key={note._id}
         sx={
-          anchorRef.current
+          draggableVideoConsultAnchorRef?.current
             ? {
                 position: "absolute",
                 left: "98%",
@@ -119,10 +123,9 @@ export default function ConsultNoteEditor({ note, anchorRef }) {
                 pointerEvents: "all",
                 maxHeight: "600px",
                 overflowY: "scroll",
-                boxShadow: 6,
                 zIndex: -1,
               }
-            : { position: "relative" }
+            : { position: "relative", maxHeight: "80vh", overflowY: "auto" }
         }
       >
         <ConsultNoteCardHeader created={note.created} />
@@ -241,11 +244,24 @@ export default function ConsultNoteEditor({ note, anchorRef }) {
             ) : (
               <>Loading Template...</>
             )}
-            {note.state !== "FINALIZED" && (
-              <Button variant="outlined" onClick={finalizeNote} sx={{ mt: 3 }}>
-                Finalize Note
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{ mt: 3, justifyContent: "flex-end" }}
+            >
+              <Button variant="" onClick={() => setNoteBeingEdited(null)}>
+                Close
               </Button>
-            )}
+              {note.state !== "FINALIZED" && (
+                <Button
+                  variant="outlined"
+                  onClick={finalizeNote}
+                  sx={{ mt: 3 }}
+                >
+                  Finalize Note
+                </Button>
+              )}
+            </Stack>
           </Stack>
         </CardContent>
       </Card>

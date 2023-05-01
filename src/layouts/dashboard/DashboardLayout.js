@@ -1,49 +1,51 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-// @mui
-import { styled } from '@mui/material/styles';
-//
-import Header from './header';
-import Nav from './nav';
+import React, { useState } from "react";
+import { Container, Grid, Typography } from "@mui/material";
+import Header from "@/layouts/dashboard/header";
+import Nav from "@/layouts/dashboard/nav";
+import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
+import NoteContext from "@/hooks/NoteContext";
+import DraggableNoteEditorContainer from "@/components/notes/DraggableNoteEditorContainer";
+import ConsultNoteDockableContainer from "@/components/notes/ConsultNoteDockableContainer";
 
-// ----------------------------------------------------------------------
-
-const APP_BAR_MOBILE = 64;
-const APP_BAR_DESKTOP = 92;
-
-const StyledRoot = styled('div')({
-  display: 'flex',
-  minHeight: '100%',
-  overflow: 'hidden',
-});
-
-const Main = styled('div')(({ theme }) => ({
-  flexGrow: 1,
-  overflow: 'auto',
-  minHeight: '100%',
-  paddingTop: APP_BAR_MOBILE + 24,
-  paddingBottom: theme.spacing(10),
-  [theme.breakpoints.up('lg')]: {
-    paddingTop: APP_BAR_DESKTOP + 24,
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-  },
-}));
-
-// ----------------------------------------------------------------------
-
-export default function DashboardLayout() {
-  const [open, setOpen] = useState(false);
+export default function PageContainer({
+  title,
+  videoButton,
+  onVideoButtonClick,
+  children,
+}) {
+  const [noteBeingEdited, setNoteBeingEdited] = useState(null);
 
   return (
-    <StyledRoot>
-      <Header onOpenNav={() => setOpen(true)} />
-
-      <Nav openNav={open} onCloseNav={() => setOpen(false)} />
-
-      <Main>
-        <Outlet />
-      </Main>
-    </StyledRoot>
+    <Container>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Header />
+        </Grid>
+        <Grid item xs={3} mt={8} sx={{ display: { xs: "none", sm: "block" } }}>
+          <Nav />
+        </Grid>
+        <Grid item xs={12} sm={9} mt={8}>
+          <Typography variant="h4" sx={{ mb: 5 }}>
+            {title}
+            {videoButton && (
+              <VideoCameraFrontIcon
+                onClick={onVideoButtonClick}
+                sx={{ ml: 2, cursor: "pointer" }}
+              />
+            )}
+          </Typography>
+          <NoteContext.Provider value={{ setNoteBeingEdited }}>
+            {children}
+            <div>
+              {noteBeingEdited && (
+                <DraggableNoteEditorContainer>
+                  <ConsultNoteDockableContainer note={noteBeingEdited} />
+                </DraggableNoteEditorContainer>
+              )}
+            </div>
+          </NoteContext.Provider>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }

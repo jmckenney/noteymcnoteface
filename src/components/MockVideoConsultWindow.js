@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
-import { Button, Card, Typography } from "@mui/material";
+import { Card } from "@mui/material";
 import Draggable from "react-draggable";
 import Image from "next/image";
 import { useAnchorContext } from "@/hooks/AnchorProvider";
 
 export default function DraggableDialog() {
-  const { setIsMounted, anchorRef } = useAnchorContext();
+  const { setIsDraggableVideoConsultMounted, draggableVideoConsultAnchorRef } =
+    useAnchorContext();
   useEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false);
-  }, [setIsMounted]);
+    setIsDraggableVideoConsultMounted(true);
+    return () => setIsDraggableVideoConsultMounted(false);
+  }, [setIsDraggableVideoConsultMounted]);
   return (
     <div
       style={{
@@ -26,7 +27,7 @@ export default function DraggableDialog() {
       }}
     >
       <Draggable>
-        <div ref={anchorRef}>
+        <div ref={draggableVideoConsultAnchorRef}>
           <Card
             style={{
               width: "500px",

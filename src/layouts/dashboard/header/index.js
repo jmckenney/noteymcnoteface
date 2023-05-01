@@ -7,7 +7,6 @@ import NotificationsPopover from "./NotificationsPopover";
 
 const StyledRoot = styled(AppBar)(({ theme }) => ({
   ...bgBlur({ color: theme.palette.background.default }),
-  boxShadow: "none",
   [theme.breakpoints.up("lg")]: {
     width: `100%`,
   },

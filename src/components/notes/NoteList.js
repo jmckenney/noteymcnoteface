@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Stack } from "@mui/material";
-import ConsultNoteDockableContainer from "./ConsultNoteDockableContainer";
+import ConsultNoteSummary from "./ConsultNoteSummary";
 
 export default function NoteList({ state }) {
   const [notes, setNotes] = useState([]);
@@ -20,7 +20,7 @@ export default function NoteList({ state }) {
         notes.map((note) => {
           switch (note.noteType) {
             case "CONSULT_ENCOUNTER":
-              return <ConsultNoteDockableContainer note={note} />;
+              return <ConsultNoteSummary note={note} />;
 
             default:
               break;

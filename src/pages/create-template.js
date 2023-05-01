@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import PageContainer from "../components/PageContainer";
+import PageContainer from "../layouts/dashboard/DashboardLayout";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/router";
 import {

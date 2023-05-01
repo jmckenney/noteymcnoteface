@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Card } from "@mui/material";
 import ConsultSummaryView from "./ConsultSummaryView";
+import NoteContext from "@/hooks/NoteContext";
 
-export default function ConsultNoteSummary({ note, mode, setMode, anchorRef }) {
+export default function ConsultNoteSummary({ note }) {
   const [expandedFullNote, setExpandedFullNote] = React.useState(false);
+  const { setNoteBeingEdited } = useContext(NoteContext);
 
   const handleExpandFullNoteSummary = () => {
     setExpandedFullNote(!expandedFullNote);
@@ -11,28 +13,7 @@ export default function ConsultNoteSummary({ note, mode, setMode, anchorRef }) {
 
   return (
     <>
-      <Card
-        key={note._id}
-        onDoubleClick={() => setMode("edit")}
-        sx={
-          // this logic is likely going to be "is this note for current consult"
-          // rather than just "is this being edited at the time of a consult"
-          // we may want to show the "view" next to consult too.
-          mode === "edit" && anchorRef.current
-            ? {
-                position: "absolute",
-                left: "98%",
-                top: "0",
-                width: "90%",
-                pointerEvents: "all",
-                maxHeight: "600px",
-                overflowY: "scroll",
-                boxShadow: 6,
-                zIndex: -1,
-              }
-            : {}
-        }
-      >
+      <Card key={note._id} onDoubleClick={() => setNoteBeingEdited(note)}>
         <ConsultSummaryView
           created={note.created}
           summary={note.summary}

@@ -7,11 +7,18 @@ export const useAnchorContext = () => {
 };
 
 export const AnchorProvider = ({ children }) => {
-  const [isMounted, setIsMounted] = useState(false);
-  const anchorRef = useRef();
+  const [isDraggableVideoConsultMounted, setIsDraggableVideoConsultMounted] =
+    useState(false);
+  const draggableVideoConsultAnchorRef = useRef();
 
   return (
-    <AnchorContext.Provider value={{ isMounted, setIsMounted, anchorRef }}>
+    <AnchorContext.Provider
+      value={{
+        isDraggableVideoConsultMounted,
+        setIsDraggableVideoConsultMounted,
+        draggableVideoConsultAnchorRef,
+      }}
+    >
       {children}
     </AnchorContext.Provider>
   );

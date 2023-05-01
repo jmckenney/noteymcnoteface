@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import PageContainer from "../components/PageContainer";
+import PageContainer from "../layouts/dashboard/DashboardLayout";
 import Link from "next/link";
 import {
   List,

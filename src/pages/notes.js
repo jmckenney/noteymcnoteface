@@ -17,7 +17,7 @@ import {
 import TemplateRenderer from "@/components/TemplateRenderer";
 import NoteList from "@/components/notes/NoteList";
 import { useState } from "react";
-import PageContainer from "@/components/PageContainer";
+import PageContainer from "@/layouts/dashboard/DashboardLayout";
 import MockVideoConsultWindow from "@/components/MockVideoConsultWindow";
 
 export default function Home() {
