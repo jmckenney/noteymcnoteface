@@ -15,8 +15,8 @@ const LineChart = () => {
           labels: ["January", "February", "March", "April", "May", "June"],
           datasets: [
             {
-              label: "My Dataset",
-              data: [12, 19, 3, 5, 2, 3],
+              label: "Weight",
+              data: [199, 198, 195, 190, 185, 182],
               borderColor: "rgba(75,192,192,1)",
               backgroundColor: "rgba(75,192,192,0.4)",
             },

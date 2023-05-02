@@ -54,7 +54,19 @@ export default function TemplateMetricPoint({ noteId }) {
         >
           <path d="m16 18 2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"></path>
         </svg>{" "}
-        <Box>-11 lbs</Box>
+        <Box>-11 lbs Total</Box>
+        <svg
+          class="MuiSvgIcon-root MuiSvgIcon-colorError MuiSvgIcon-fontSizeMedium css-1nkrb4e-MuiSvgIcon-root"
+          focusable="false"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          data-testid="TrendingDownIcon"
+          width="25"
+          fill="#12B76A"
+        >
+          <path d="m16 18 2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"></path>
+        </svg>{" "}
+        <Box>-3 lbs Since Last Session</Box>
       </Stack>
 
       <Stack direction="row" spacing={2}>

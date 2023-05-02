@@ -131,22 +131,6 @@ export default function ConsultNoteEditor({
         <ConsultNoteCardHeader created={note.created} />
         <CardContent>
           <Stack spacing={0}>
-            {/* member summary */}
-            <NoteAreaExpanderHeading
-              title="Member Summary"
-              handleClick={handleExpandMemberSummary}
-            />
-            <Collapse in={expandedMemberSummary} timeout="auto" unmountOnExit>
-              <Stack spacing={3} sx={{ mt: 3, mb: 3 }}>
-                <Box>
-                  <CoolGraph />
-                </Box>
-                <Box>
-                  <Typography variant="subtitle1">Past Consults</Typography>
-                  <p>2 with me</p>
-                </Box>
-              </Stack>
-            </Collapse>
             {/* metrics */}
             <NoteAreaExpanderHeading
               title="Metrics"
