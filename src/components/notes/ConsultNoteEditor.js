@@ -269,9 +269,9 @@ export default function ConsultNoteEditor({
         <SyncIcon
           sx={{
             position: "fixed",
-            top: "50%",
-            right: "50%",
-            transform: "translate(50%, -50%)",
+            top: "25px",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
             zIndex: 1000,
             color: "#12B76A",
             animation: "spin 2s linear infinite",

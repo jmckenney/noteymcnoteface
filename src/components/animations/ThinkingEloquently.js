@@ -25,12 +25,12 @@ function ThinkingEloquently({ show }) {
         ref={lottieRef}
         sx={{
           position: "fixed",
-          top: "50%",
-          right: "50%",
-          transform: "translate(50%, -50%)",
+          top: "55px",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
           zIndex: 1000,
-          width: "200px",
-          height: "200px",
+          width: "100px",
+          height: "100px",
         }}
       />
     </Fade>
