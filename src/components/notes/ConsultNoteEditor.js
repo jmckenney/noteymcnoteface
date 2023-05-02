@@ -257,7 +257,7 @@ export default function ConsultNoteEditor({
             left: "50%",
             transform: "translate(-50%, -50%)",
             zIndex: 1000,
-            color: "#12B76A",
+            color: "purple",
             animation: "spin 2s linear infinite",
             "@keyframes spin": {
               "0%": {

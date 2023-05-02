@@ -7,6 +7,7 @@ import {
   ListItemButton,
 } from "@mui/material";
 import ChecklistIcon from "@mui/icons-material/Checklist";
+import Link from "next/link";
 
 export default function TemplatesPage() {
   const [forms, setForms] = useState([]);
@@ -35,6 +36,7 @@ export default function TemplatesPage() {
           </ListItem>
         ))}
       </List>
+      <Link href="/create-form">Create Form</Link>
     </>
   );
 }

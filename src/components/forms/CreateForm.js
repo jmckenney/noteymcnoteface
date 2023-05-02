@@ -100,6 +100,7 @@ export default function CreateForm({ handleSavedForm }) {
                 type={formItem.type}
                 index={index}
                 title={formItem.title}
+                formItem={formItem}
               />
             ))}
           </Stack>

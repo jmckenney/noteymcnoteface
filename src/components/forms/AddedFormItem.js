@@ -7,7 +7,7 @@ import {
   InputLabel,
 } from "@mui/material";
 
-const AddedFormItem = ({ id, name, type, title }) => {
+const AddedFormItem = ({ id, name, type, title, options, formItem }) => {
   const formItemTypes = {
     input: () => (
       <Box key={id} sx={{ borderRadius: 1 }}>
@@ -44,6 +44,18 @@ const AddedFormItem = ({ id, name, type, title }) => {
         <Typography variant="h6" component="h2">
           {title}
         </Typography>
+      </Box>
+    ),
+    select: () => (
+      <Box key={id} sx={{ p: 1, m: 1, borderRadius: 1 }}>
+        <Typography variant="h6" component="h2">
+          {title}
+        </Typography>
+        <select>
+          {formItem?.options?.map((option) => (
+            <option key={option.value}>{option.title}</option>
+          ))}
+        </select>
       </Box>
     ),
   };

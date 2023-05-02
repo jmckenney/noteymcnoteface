@@ -57,7 +57,7 @@ export default function FormPage() {
 
   return (
     <>
-      <PageContainer title="Form">
+      <>
         <Box sx={{ display: "flex" }}>
           <Box sx={{ flexGrow: 3, pr: 4 }}>
             <Typography variant="h6" component="h2" gutterBottom>
@@ -75,6 +75,7 @@ export default function FormPage() {
                   type={formItem.type}
                   index={index}
                   title={formItem.title}
+                  formItem={formItem}
                 />
               ))}
 
@@ -105,7 +106,7 @@ export default function FormPage() {
             </Stack>
           </Box>
         </Box>
-      </PageContainer>
+      </>
 
       {showInputFormItemDialog && (
         <PotentialFormItemDialog

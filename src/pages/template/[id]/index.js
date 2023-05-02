@@ -19,7 +19,7 @@ export default function TemplatePage() {
   }, [id]);
 
   return (
-    <PageContainer title="Template">
+    <>
       <h1>Template: {id}</h1>
       <p>{template?.templateTitle}</p>
       <p>{template?.templateDescription}</p>
@@ -36,6 +36,6 @@ export default function TemplatePage() {
           <hr />
         </>
       ))}
-    </PageContainer>
+    </>
   );
 }

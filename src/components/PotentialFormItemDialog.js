@@ -6,7 +6,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { v4 as uuidv4 } from "uuid";
 
-import { TextField, FormControl, InputLabel, FormGroup } from "@mui/material";
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  FormGroup,
+  Stack,
+} from "@mui/material";
 
 export default function PotentialFormItemDialog({
   setOpen,
@@ -16,6 +22,9 @@ export default function PotentialFormItemDialog({
 }) {
   const [inputName, setInputName] = useState("");
   const [title, setTitle] = useState("");
+  const [options, setOptions] = useState([]);
+  const [optionTitle, setOptionTitle] = useState("");
+  const [optionValue, setOptionValue] = useState("");
   const handleClose = () => {
     setOpen(false);
   };
@@ -30,6 +39,9 @@ export default function PotentialFormItemDialog({
         break;
       case "title":
         saveFormItem({ id: uuidv4(), title, type: "title" });
+        break;
+      case "select":
+        saveFormItem({ id: uuidv4(), title, type: "select", options });
         break;
 
       default:
@@ -62,6 +74,71 @@ export default function PotentialFormItemDialog({
                 sx={{ mt: 1 }}
               />
             </FormControl>
+          </FormGroup>
+        );
+      case "select":
+        return (
+          <FormGroup>
+            <FormControl>
+              <TextField
+                id="title"
+                type="text"
+                onChange={handleChange(setTitle)}
+                value={title}
+                variant="outlined"
+                fullWidth
+                label="Title Text"
+                sx={{ mt: 1 }}
+              />
+            </FormControl>
+            <Stack spacing={2}>
+              {options.length > 0 && (
+                <p>
+                  Options:{" "}
+                  <ul>
+                    {options.map((option, index) => (
+                      <li key={option.value}>- {option.title}</li>
+                    ))}
+                  </ul>
+                </p>
+              )}
+            </Stack>
+            <Stack direction="row" spacing={2}>
+              <FormControl>
+                <TextField
+                  id="title"
+                  type="text"
+                  onChange={handleChange(setOptionTitle)}
+                  value={optionTitle}
+                  variant="outlined"
+                  fullWidth
+                  label="Title"
+                  sx={{ mt: 1 }}
+                />
+              </FormControl>
+              <FormControl>
+                <TextField
+                  id="value"
+                  type="text"
+                  onChange={handleChange(setOptionValue)}
+                  value={optionValue}
+                  variant="outlined"
+                  fullWidth
+                  label="Value"
+                  sx={{ mt: 1 }}
+                />
+              </FormControl>
+              <Button
+                onClick={() =>
+                  setOptions((prevOptions) => [
+                    ...prevOptions,
+                    { title: optionTitle, value: optionValue },
+                  ])
+                }
+              >
+                Add Option
+              </Button>
+            </Stack>
           </FormGroup>
         );
       case "title":
