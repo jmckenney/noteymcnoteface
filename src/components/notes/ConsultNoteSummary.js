@@ -23,6 +23,10 @@ export default function ConsultNoteSummary({ note, beingEdited }) {
               transform: "translate(-50%, -50%)",
               zIndex: 1,
               textAlign: "center",
+              boxShadow: 3,
+              backgroundColor: "white",
+              borderRadius: 2,
+              padding: 2,
             }}
           >
             <strong>
