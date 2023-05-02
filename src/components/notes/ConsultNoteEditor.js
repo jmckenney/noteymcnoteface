@@ -9,6 +9,10 @@ import {
   CardContent,
   Collapse,
   Divider,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import TemplateMetricPoint from "../template-parts/TemplateMetricPoint";
 import debounce from "lodash/debounce";
@@ -210,6 +214,38 @@ export default function ConsultNoteEditor({
                                           {formItem.title}
                                         </Typography>
                                         <Divider variant="middle" />
+                                      </>
+                                    );
+                                  case "select":
+                                    return (
+                                      <>
+                                        <FormControl
+                                          fullWidth
+                                          variant="outlined"
+                                        >
+                                          <InputLabel id="demo-simple-select-outlined-label">
+                                            {formItem.title}
+                                          </InputLabel>
+                                          <Select
+                                            labelId="demo-simple-select-outlined-label"
+                                            id="demo-simple-select-outlined"
+                                            value={formItem?.value}
+                                            onChange={handleFormInputChange(
+                                              templateItemIndex,
+                                              formItemIndex
+                                            )}
+                                            label={formItem.title}
+                                          >
+                                            {formItem.options.map((option) => (
+                                              <MenuItem
+                                                key={option.value}
+                                                value={option.value}
+                                              >
+                                                {option.title}
+                                              </MenuItem>
+                                            ))}
+                                          </Select>
+                                        </FormControl>
                                       </>
                                     );
                                   default:
