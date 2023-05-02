@@ -21,7 +21,7 @@ export default function DraggableDialog() {
         left: 0,
         bottom: 0,
         pointerEvents: "none",
-        zIndex: 9999,
+        zIndex: 999,
       }}
     >
       <Draggable>

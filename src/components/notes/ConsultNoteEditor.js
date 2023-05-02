@@ -240,6 +240,7 @@ export default function ConsultNoteEditor({
                                               <MenuItem
                                                 key={option.value}
                                                 value={option.value}
+                                                sx={{ zIndex: 3000 }}
                                               >
                                                 {option.title}
                                               </MenuItem>
@@ -284,29 +285,29 @@ export default function ConsultNoteEditor({
             </Stack>
           </Stack>
         </CardContent>
+        <Fade in={saving} timeout={1000}>
+          <SyncIcon
+            sx={{
+              position: "fixed",
+              top: "25px",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 1000,
+              color: "purple",
+              animation: "spin 2s linear infinite",
+              "@keyframes spin": {
+                "0%": {
+                  transform: "rotate(360deg)",
+                },
+                "100%": {
+                  transform: "rotate(0deg)",
+                },
+              },
+            }}
+          />
+        </Fade>
+        <ThinkingEloquently show={llmProcessing} />
       </Card>
-      <Fade in={saving} timeout={1000}>
-        <SyncIcon
-          sx={{
-            position: "fixed",
-            top: "25px",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 1000,
-            color: "purple",
-            animation: "spin 2s linear infinite",
-            "@keyframes spin": {
-              "0%": {
-                transform: "rotate(360deg)",
-              },
-              "100%": {
-                transform: "rotate(0deg)",
-              },
-            },
-          }}
-        />
-      </Fade>
-      <ThinkingEloquently show={llmProcessing} />
     </>
   );
 }
