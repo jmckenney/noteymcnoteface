@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import PageContainer from "../layouts/dashboard/DashboardLayout";
-import Link from "next/link";
 import {
   List,
   ListItem,
@@ -23,7 +21,7 @@ export default function TemplatesPage() {
   }, []);
 
   return (
-    <PageContainer title="Templates">
+    <>
       <List dense>
         {templates?.map((template) => (
           <ListItem key="form.formTitle">
@@ -39,6 +37,6 @@ export default function TemplatesPage() {
           </ListItem>
         ))}
       </List>
-    </PageContainer>
+    </>
   );
 }

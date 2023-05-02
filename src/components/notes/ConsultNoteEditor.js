@@ -20,7 +20,7 @@ import ConsultNoteCardHeader from "./ConsultNoteCardHeader";
 import CoolGraph from "../CoolGraph/CoolGraph.js";
 import NoteAreaExpanderHeading from "./NoteAreaExpanderHeading";
 import ThinkingEloquently from "../animations/ThinkingEloquently";
-import NoteContext from "@/hooks/NoteContext";
+import NoteContext from "@/hooks/TeamContext";
 
 export default function ConsultNoteEditor({
   note,

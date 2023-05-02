@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import PageContainer from "../layouts/dashboard/DashboardLayout";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/router";
 import {
@@ -175,7 +174,7 @@ export default function TemplateCreationPage() {
   };
 
   return (
-    <PageContainer title="Create Template">
+    <>
       <Grid container spacing={4}>
         <Grid item xs={12} md={7}>
           <Typography variant="h6" component="h2" gutterBottom>
@@ -286,6 +285,6 @@ export default function TemplateCreationPage() {
           <Button onClick={() => setShowFormCreator(false)}>Close</Button>
         </DialogActions>
       </Dialog>
-    </PageContainer>
+    </>
   );
 }

@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Stack } from "@mui/material";
 import ConsultNoteSummary from "./ConsultNoteSummary";
+import NoteContext from "@/hooks/TeamContext";
 
 export default function NoteList({ state }) {
   const [notes, setNotes] = useState([]);
+
+  const { noteBeingEdited } = useContext(NoteContext);
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -20,7 +23,14 @@ export default function NoteList({ state }) {
         notes.map((note) => {
           switch (note.noteType) {
             case "CONSULT_ENCOUNTER":
-              return <ConsultNoteSummary note={note} />;
+              return (
+                <ConsultNoteSummary
+                  note={note}
+                  beingEdited={
+                    noteBeingEdited && noteBeingEdited._id === note._id
+                  }
+                />
+              );
 
             default:
               break;

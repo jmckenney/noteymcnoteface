@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { Card } from "@mui/material";
+import { Box, Card } from "@mui/material";
 import ConsultSummaryView from "./ConsultSummaryView";
-import NoteContext from "@/hooks/NoteContext";
+import NoteContext from "@/hooks/TeamContext";
 
-export default function ConsultNoteSummary({ note }) {
+export default function ConsultNoteSummary({ note, beingEdited }) {
   const [expandedFullNote, setExpandedFullNote] = React.useState(false);
   const { setNoteBeingEdited } = useContext(NoteContext);
 
@@ -14,13 +14,35 @@ export default function ConsultNoteSummary({ note }) {
   return (
     <>
       <Card key={note._id} onDoubleClick={() => setNoteBeingEdited(note)}>
-        <ConsultSummaryView
-          created={note.created}
-          summary={note.summary}
-          markdownOutputOfTemplate={note.markdownOutputOfTemplate}
-          expandedFullNote={expandedFullNote}
-          handleExpandFullNoteSummary={handleExpandFullNoteSummary}
-        />
+        {beingEdited && (
+          <Box
+            sx={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 1,
+              textAlign: "center",
+            }}
+          >
+            <strong>
+              Currently
+              <br />
+              being
+              <br />
+              Edited.
+            </strong>
+          </Box>
+        )}
+        <Box sx={beingEdited ? { opacity: ".2" } : {}}>
+          <ConsultSummaryView
+            created={note.created}
+            summary={note.summary}
+            markdownOutputOfTemplate={note.markdownOutputOfTemplate}
+            expandedFullNote={expandedFullNote}
+            handleExpandFullNoteSummary={handleExpandFullNoteSummary}
+          />
+        </Box>
       </Card>
     </>
   );

@@ -5,16 +5,13 @@ import {
   Typography,
   Stack,
 } from "@mui/material";
-import { useState } from "react";
 import Link from "next/link";
-import PageContainer from "../layouts/dashboard/DashboardLayout";
 
 // ----------------------------------------------------------------------
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
   return (
-    <PageContainer>
+    <>
       <Stack spacing={3}>
         <Card>
           <CardActionArea component={Link} href="/notes">
@@ -38,6 +35,6 @@ export default function Home() {
           </CardActionArea>
         </Card>
       </Stack>
-    </PageContainer>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import ConsultNoteDockableContainer from "./notes/ConsultNoteDockableContainer";
-import NoteContext from "@/hooks/NoteContext";
+import NoteContext from "@/hooks/TeamContext";
 
 export default function TemplateRenderer({ trigger = ".hcinitial" }) {
   const [template, setTemplate] = useState(null);

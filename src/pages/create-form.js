@@ -1,7 +1,6 @@
 import CreateForm from "../components/forms/CreateForm";
 
 import React from "react";
-import PageContainer from "@/layouts/dashboard/DashboardLayout";
 
 import { useRouter } from "next/router";
 
@@ -12,8 +11,8 @@ export default function CreateFormPage() {
     router.push(`/forms`);
   };
   return (
-    <PageContainer title="Create form">
+    <>
       <CreateForm handleSavedForm={handleSavedForm} />
-    </PageContainer>
+    </>
   );
 }

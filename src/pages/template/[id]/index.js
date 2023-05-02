@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import PageContainer from "../../../components/PageContainer";
+import PageContainer from "@/layouts/dashboard/DashboardLayout";
 
 export default function TemplatePage() {
   const router = useRouter();

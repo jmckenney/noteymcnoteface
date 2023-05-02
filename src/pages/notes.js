@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Card,
   CardContent,
@@ -10,45 +9,24 @@ import {
   Select,
   MenuItem,
   Stack,
-  Tabs,
-  Tab,
   TextField,
 } from "@mui/material";
 import TemplateRenderer from "@/components/TemplateRenderer";
 import NoteList from "@/components/notes/NoteList";
-import { useState } from "react";
-import PageContainer from "@/layouts/dashboard/DashboardLayout";
-import MockVideoConsultWindow from "@/components/MockVideoConsultWindow";
+import { useContext, useState, useEffect } from "react";
+import TeamNavigation from "@/components/TeamNavigation";
+import TeamContext from "@/hooks/TeamContext";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
   const [filterBy, setFilterBy] = useState("IN_PROGRESS");
-  const [showVideoConsult, setShowVideoConsult] = useState(false);
+  const { setShowMemberName } = useContext(TeamContext);
+  useEffect(() => {
+    setShowMemberName(true);
+  });
   return (
-    <PageContainer
-      title="Tristin McNotey"
-      videoButton
-      onVideoButtonClick={() => setShowVideoConsult(!showVideoConsult)}
-    >
-      <Box sx={{ bgcolor: "background.paper", mb: 3 }}>
-        <Tabs
-          onChange={() => console.log("changed")}
-          variant="scrollable"
-          scrollButtons={false}
-          value="notes"
-          aria-label="scrollable auto tabs example"
-        >
-          <Tab label="Member Summary" />
-          <Tab label="Key Information" />
-          <Tab label="Care Team" />
-          <Tab label="Goals" />
-          <Tab label="Notes & Plan" value="notes" />
-          <Tab label="Programs" />
-          <Tab label="Consultations" />
-          <Tab label="Content Cards" />
-          <Tab label="Scheduled" />
-        </Tabs>
-      </Box>
+    <>
+      <TeamNavigation />
       <Grid container spacing={3}>
         <Grid item xs={12} sm={4}>
           <Typography variant="h5" sx={{ mb: 3 }}>
@@ -108,7 +86,6 @@ export default function Home() {
           </Stack>
         </Grid>
       </Grid>
-      {showVideoConsult && <MockVideoConsultWindow />}
-    </PageContainer>
+    </>
   );
 }

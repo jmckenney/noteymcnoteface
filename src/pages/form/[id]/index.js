@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import PageContainer from "../../../components/PageContainer";
+import PageContainer from "@/layouts/dashboard/DashboardLayout";
 import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import AddedFormItem from "@/components/forms/AddedFormItem";
 import PotentialFormItemDialog from "@/components/PotentialFormItemDialog";
