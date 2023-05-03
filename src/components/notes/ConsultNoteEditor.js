@@ -21,7 +21,6 @@ import { formatTemplateOutputToMarkdown } from "@/components/templates/formatTem
 import SyncIcon from "@mui/icons-material/Sync";
 import Fade from "@mui/material/Fade";
 import ConsultNoteCardHeader from "./ConsultNoteCardHeader";
-import CoolGraph from "../CoolGraph/CoolGraph.js";
 import NoteAreaExpanderHeading from "./NoteAreaExpanderHeading";
 import ThinkingEloquently from "../animations/ThinkingEloquently";
 import NoteContext from "@/hooks/TeamContext";
@@ -39,10 +38,6 @@ export default function ConsultNoteEditor({
   const [expandedCustomItems, setExpandedCustomItems] = useState({});
   const router = useRouter();
   const { setNoteBeingEdited } = useContext(NoteContext);
-
-  const handleExpandMemberSummary = useCallback(() => {
-    setExpandedMemberSummary(!expandedMemberSummary);
-  }, [expandedMemberSummary]);
 
   const handleMetricsClick = useCallback(() => {
     setExpandedMetrics(!expandedMetrics);
@@ -167,6 +162,7 @@ export default function ConsultNoteEditor({
                           in={expandedCustomItems?.[item.uuid]}
                           timeout="auto"
                           unmountOnExit
+                          sx={{ pb: 2 }}
                         >
                           <Stack spacing={3} sx={{ pt: 3 }}>
                             {item.form.formItems?.map(
@@ -208,7 +204,7 @@ export default function ConsultNoteEditor({
                                     return (
                                       <>
                                         <Typography
-                                          variant="subtitle"
+                                          variant="subtitle2"
                                           key={formItem.uuid}
                                         >
                                           {formItem.title}
@@ -222,10 +218,14 @@ export default function ConsultNoteEditor({
                                         <FormControl
                                           fullWidth
                                           variant="outlined"
+                                          size="small"
                                         >
-                                          <InputLabel id="demo-simple-select-outlined-label">
+                                          <Typography
+                                            variant="body2"
+                                            sx={{ mb: 1 }}
+                                          >
                                             {formItem.title}
-                                          </InputLabel>
+                                          </Typography>
                                           <Select
                                             labelId="demo-simple-select-outlined-label"
                                             id="demo-simple-select-outlined"
@@ -234,7 +234,6 @@ export default function ConsultNoteEditor({
                                               templateItemIndex,
                                               formItemIndex
                                             )}
-                                            label={formItem.title}
                                           >
                                             {formItem.options.map((option) => (
                                               <MenuItem

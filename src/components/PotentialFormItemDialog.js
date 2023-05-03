@@ -42,6 +42,8 @@ export default function PotentialFormItemDialog({
         break;
       case "select":
         saveFormItem({ id: uuidv4(), title, type: "select", options });
+        setOptionTitle("");
+        setOptionValue("");
         break;
 
       default:
@@ -129,12 +131,14 @@ export default function PotentialFormItemDialog({
                 />
               </FormControl>
               <Button
-                onClick={() =>
+                onClick={() => {
                   setOptions((prevOptions) => [
                     ...prevOptions,
                     { title: optionTitle, value: optionValue },
-                  ])
-                }
+                  ]);
+                  setOptionTitle("");
+                  setOptionValue("");
+                }}
               >
                 Add Option
               </Button>

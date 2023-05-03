@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import ConsultNoteDockableContainer from "./notes/ConsultNoteDockableContainer";
 import NoteContext from "@/hooks/TeamContext";
 
 export default function TemplateRenderer({ trigger = ".hcinitial" }) {
@@ -52,7 +51,7 @@ export default function TemplateRenderer({ trigger = ".hcinitial" }) {
       setTemplate(templateJson);
 
       const noteToEdit = {
-        _id: noteId,
+        _id: noteResponseJson.insertedId,
         created: new Date(),
         state: "IN_PROGRESS",
         noteTemplate: templateJson,

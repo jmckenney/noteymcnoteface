@@ -42,7 +42,6 @@ export default function TemplateCreationPage() {
 
   const [addedTemplateItems, setAddedTemplateItems] = useState([]);
   const [templateTitle, setTemplateTitle] = useState("");
-  const [templateTrigger, setTemplateTrigger] = useState("");
   const [templateDescription, setTemplateDescription] = useState("");
   const [showFormCreator, setShowFormCreator] = useState(false);
   const [
@@ -154,7 +153,6 @@ export default function TemplateCreationPage() {
     if (addedTemplateItems.length === 0) return;
     const template = {
       templateTitle,
-      templateTrigger,
       templateDescription,
       templateItems: addedTemplateItems,
     };
@@ -188,16 +186,6 @@ export default function TemplateCreationPage() {
               variant="outlined"
               value={templateTitle}
               onChange={(e) => setTemplateTitle(e.target.value)}
-            />
-          </Box>
-          <Box sx={{ mt: 2 }}>
-            <TextField
-              fullWidth
-              label="Template Trigger"
-              id="templateTrigger"
-              variant="outlined"
-              value={templateTrigger}
-              onChange={(e) => setTemplateTrigger(e.target.value)}
             />
           </Box>
           <Box sx={{ mt: 2, mb: 2 }}>
