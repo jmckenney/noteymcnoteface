@@ -44,11 +44,11 @@ export default function TemplateMetricPoint({ noteId }) {
       <Typography variant="subtitle1">New Weight Entry</Typography>
       <Stack direction="row" spacing={1}>
         <svg
-          class="MuiSvgIcon-root MuiSvgIcon-colorError MuiSvgIcon-fontSizeMedium css-1nkrb4e-MuiSvgIcon-root"
+          className="MuiSvgIcon-root MuiSvgIcon-colorError MuiSvgIcon-fontSizeMedium css-1nkrb4e-MuiSvgIcon-root"
           focusable="false"
           viewBox="0 0 24 24"
-          aria-hidden="true"
-          data-testid="TrendingDownIcon"
+          ariaHidden="true"
+          dataTestid="TrendingDownIcon"
           width="25"
           fill="#12B76A"
         >
@@ -56,11 +56,11 @@ export default function TemplateMetricPoint({ noteId }) {
         </svg>{" "}
         <Box>-11 lbs Total</Box>
         <svg
-          class="MuiSvgIcon-root MuiSvgIcon-colorError MuiSvgIcon-fontSizeMedium css-1nkrb4e-MuiSvgIcon-root"
+          className="MuiSvgIcon-root MuiSvgIcon-colorError MuiSvgIcon-fontSizeMedium css-1nkrb4e-MuiSvgIcon-root"
           focusable="false"
           viewBox="0 0 24 24"
-          aria-hidden="true"
-          data-testid="TrendingDownIcon"
+          ariaHidden="true"
+          dataTestid="TrendingDownIcon"
           width="25"
           fill="#12B76A"
         >

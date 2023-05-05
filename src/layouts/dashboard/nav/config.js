@@ -14,17 +14,14 @@ const navConfig = [
   {
     title: "dashboard",
     path: "/",
-    icon: icon("ic_analytics"),
   },
   {
     title: "Provider Metrics",
     path: "",
-    icon: icon("ic_user"),
   },
   {
     title: "recently added",
     path: "/dashboard/products",
-    icon: icon("ic_cart"),
   },
 ];
 

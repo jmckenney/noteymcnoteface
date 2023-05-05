@@ -1,22 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { Stack } from "@mui/material";
 import ConsultNoteSummary from "./ConsultNoteSummary";
 import NoteContext from "@/hooks/TeamContext";
 
-export default function NoteList({ state }) {
-  const [notes, setNotes] = useState([]);
-
+export default function NoteList({ notes }) {
   const { noteBeingEdited } = useContext(NoteContext);
-
-  useEffect(() => {
-    const fetchNotes = async () => {
-      const response = await fetch(`/api/notes?state=${state}&limit=10`);
-      const notesJson = await response.json();
-      setNotes(notesJson);
-    };
-    fetchNotes();
-  }, [state]);
-
   return (
     <Stack spacing={3}>
       {notes.length ? (
@@ -25,6 +13,7 @@ export default function NoteList({ state }) {
             case "CONSULT_ENCOUNTER":
               return (
                 <ConsultNoteSummary
+                  key={note._id}
                   note={note}
                   beingEdited={
                     noteBeingEdited && noteBeingEdited._id === note._id

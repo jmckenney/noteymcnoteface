@@ -96,6 +96,19 @@ async function updateDocument(client, query, update) {
   return result.modifiedCount;
 }
 
+async function updateRecommendations(query) {
+  const client = await connectToDatabase();
+  const db = client.db();
+  const collection = db.collection(collectionName);
+
+  // ToDo, call recommendation engine
+  // save to correct place...
+  // put actual recommendations:)
+  console.log("updating recommendations to true");
+  await collection.updateOne(query, { $set: { recommendations: true } });
+  client.close();
+}
+
 async function patchDocument(client, query, update) {
   query = { _id: new ObjectId(query._ID) };
   const db = client.db();
@@ -106,6 +119,14 @@ async function patchDocument(client, query, update) {
   // TODO, make this more robust and less like the smell of dead fish.
   if (update.hasOwnProperty("metrics")) {
     updateOperation = { $push: { metrics: update.metrics } };
+    // Kick off an async evaluation of possible content to send
+    setTimeout(async () => {
+      try {
+        await updateRecommendations(query);
+      } catch (error) {
+        console.log("Error updating recommendations:", error);
+      }
+    }, 5000);
   } else if (update.hasOwnProperty("noteTemplate")) {
     const valueTexts = getValueProperties(update.noteTemplate);
     const textSummaryOfFullTemplate = flattenTemplateObjectwithValues(
@@ -152,26 +173,30 @@ async function patchDocument(client, query, update) {
     // get the full note from the database to summarize
     const existing = await findDocuments(client, query, 1);
     // Get a shorter prompt summary by extracting most of the important values
-    const valueTexts = getValueProperties(existing.noteTemplate);
+    // console.log("existing note:", JSON.stringify(existing[0].noteTemplate));
+    const valueTexts = getValueProperties(existing[0].noteTemplate);
     try {
       const completion = await openai.createCompletion({
         model: "text-davinci-003",
         max_tokens: 1000,
-        temperature: 0.2,
+        temperature: 0,
         prompt: `
       Create a short summary of the patient's goals and motivations. Include
-      and details about hospital stays or other medical history that may be
-      relevant to the patient's current situation.
+      any details about hospital stays or other medical history that may be
+      relevant to the patient's current situation. Only summarize the formItems
+      that have value properties in them. The string values of the value properties
+      are the relevant details to include in the summary.
 
       ${JSON.stringify(valueTexts)}
       `,
       });
+      console.log(valueTexts);
       console.log(completion.data.choices[0].text);
 
       updateOperation = {
         $set: {
-          state: "IN_PROGRESS",
-          // state: update.state,
+          // state: "IN_PROGRESS",
+          state: update.state,
           summary: completion.data.choices[0].text,
         },
       };

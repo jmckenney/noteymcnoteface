@@ -20,7 +20,7 @@ export default function TeamNavigation() {
               Member Summary
             </Link>
           }
-          value="member-summary"
+          value="/member-summary"
         />
         <Tab label="Key Information" />
         <Tab label="Care Team" />
@@ -31,7 +31,7 @@ export default function TeamNavigation() {
               Notes
             </Link>
           }
-          value="notes"
+          value="/notes"
         />
         <Tab label="Programs" />
         <Tab label="Consultations" />

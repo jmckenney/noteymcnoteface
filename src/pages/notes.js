@@ -13,17 +13,25 @@ import {
 } from "@mui/material";
 import TemplateRenderer from "@/components/TemplateRenderer";
 import NoteList from "@/components/notes/NoteList";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useCallback, useState, useEffect } from "react";
 import TeamNavigation from "@/components/TeamNavigation";
 import TeamContext from "@/hooks/TeamContext";
+import NotesContext from "@/hooks/NotesContext";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const [filterBy, setFilterBy] = useState("IN_PROGRESS");
+
   const { setShowMemberName } = useContext(TeamContext);
+  const { notes, fetchNotes, filterBy, setFilterBy } = useContext(NotesContext);
+
   useEffect(() => {
     setShowMemberName(true);
-  });
+  }, [setShowMemberName]);
+
+  useEffect(() => {
+    fetchNotes();
+  }, [fetchNotes]);
+
   return (
     <>
       <TeamNavigation />
@@ -63,7 +71,7 @@ export default function Home() {
         <Grid item xs={12} sm={8}>
           <Stack spacing={3}>
             <Button variant="outlined" onClick={() => setOpen(true)}>
-              Create New Note
+              New Consult Note
             </Button>
             {open && <TemplateRenderer>Rendered form here</TemplateRenderer>}
 
@@ -82,7 +90,7 @@ export default function Home() {
                 <MenuItem value="FINALIZED">Finalized Notes</MenuItem>
               </Select>
             </FormControl>
-            <NoteList state={filterBy} />
+            <NoteList notes={notes} />
           </Stack>
         </Grid>
       </Grid>

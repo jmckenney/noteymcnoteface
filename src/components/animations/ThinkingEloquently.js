@@ -24,7 +24,7 @@ function ThinkingEloquently({ show }) {
       <Box
         ref={lottieRef}
         sx={{
-          position: "fixed",
+          position: "absolute",
           top: "55px",
           left: "50%",
           transform: "translate(-50%, -50%)",
