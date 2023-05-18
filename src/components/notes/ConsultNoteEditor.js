@@ -6,7 +6,6 @@ import {
   Chip,
   Stack,
   Typography,
-  TextField,
   CardContent,
   Collapse,
   Divider,
@@ -171,7 +170,7 @@ export default function ConsultNoteEditor({
             : { maxHeight: "80vh", overflowY: "auto" }
         }
       >
-        <ConsultNoteCardHeader created={note.created} />
+        <ConsultNoteCardHeader created={note.created} showSizing />
         <CardContent>
           <Stack spacing={0}>
             {/* metrics */}
@@ -227,18 +226,6 @@ export default function ConsultNoteEditor({
                                         variant="outlined"
                                         value={formItem?.value}
                                       />
-
-                                      // <TextField
-                                      //   key={formItem.id}
-                                      //   label={formItem.name}
-                                      //   variant="outlined"
-                                      //   fullWidth
-                                      //   onChange={handleFormInputChange(
-                                      //     templateItemIndex,
-                                      //     formItemIndex
-                                      //   )}
-                                      //   value={formItem?.value}
-                                      // />
                                     );
                                   case "textarea":
                                     return (
@@ -257,19 +244,6 @@ export default function ConsultNoteEditor({
                                           variant="outlined"
                                           value={formItem?.value}
                                         />
-                                        {/* <TextField
-                                          key={formItem.id}
-                                          label={formItem.name}
-                                          variant="outlined"
-                                          fullWidth
-                                          multiline
-                                          rows={4}
-                                          onChange={handleFormInputChange(
-                                            templateItemIndex,
-                                            formItemIndex
-                                          )}
-                                          value={formItem?.value}
-                                        /> */}
                                       </>
                                     );
                                   case "title":

@@ -10,6 +10,8 @@ import DraggableNoteEditorContainer from "@/components/notes/DraggableNoteEditor
 import ConsultNoteDockableContainer from "@/components/notes/ConsultNoteDockableContainer";
 import MockVideoConsultWindow from "@/components/MockVideoConsultWindow";
 
+import { useMinimizeNoteContext } from "@/hooks/MinimizeNoteProvider";
+
 export default function PageContainer({ children, title = "" }) {
   const [noteBeingEdited, setNoteBeingEdited] = useState(null);
   const [showVideoConsult, setShowVideoConsult] = useState(false);
@@ -21,6 +23,9 @@ export default function PageContainer({ children, title = "" }) {
     const notesJson = await response.json();
     setNotes(notesJson);
   }, [filterBy, setNotes]);
+
+  const { isNoteMinimized } = useMinimizeNoteContext();
+
   return (
     <>
       <Container>
@@ -40,12 +45,10 @@ export default function PageContainer({ children, title = "" }) {
             {showMemberName && (
               <Typography variant="h4" sx={{ mb: 5 }}>
                 Tristan Templeton
-                {true && (
-                  <VideoCameraFrontIcon
-                    onClick={() => setShowVideoConsult(!showVideoConsult)}
-                    sx={{ ml: 2, cursor: "pointer" }}
-                  />
-                )}
+                <VideoCameraFrontIcon
+                  onClick={() => setShowVideoConsult(!showVideoConsult)}
+                  sx={{ ml: 2, cursor: "pointer" }}
+                />
               </Typography>
             )}
             <DictationProvider>
@@ -68,9 +71,31 @@ export default function PageContainer({ children, title = "" }) {
                   {children}
                   <div>
                     {noteBeingEdited && (
-                      <DraggableNoteEditorContainer>
-                        <ConsultNoteDockableContainer note={noteBeingEdited} />
-                      </DraggableNoteEditorContainer>
+                      <>
+                        {isNoteMinimized ? (
+                          <div
+                            style={{
+                              position: "absolute",
+                              height: "100px",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              bottom: "0",
+                              top: "auto",
+                              overflow: "hidden",
+                            }}
+                          >
+                            <ConsultNoteDockableContainer
+                              note={noteBeingEdited}
+                            />
+                          </div>
+                        ) : (
+                          <DraggableNoteEditorContainer>
+                            <ConsultNoteDockableContainer
+                              note={noteBeingEdited}
+                            />
+                          </DraggableNoteEditorContainer>
+                        )}
+                      </>
                     )}
                   </div>
                 </NotesContext.Provider>
