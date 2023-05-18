@@ -26,6 +26,7 @@ import NoteAreaExpanderHeading from "./NoteAreaExpanderHeading";
 import ThinkingEloquently from "../animations/ThinkingEloquently";
 import TeamContext from "@/hooks/TeamContext";
 import NotesContext from "@/hooks/NotesContext";
+import DictationInput from "../DictationInput";
 
 export default function ConsultNoteEditor({
   note = {},
@@ -213,33 +214,63 @@ export default function ConsultNoteEditor({
                                 switch (formItem.type) {
                                   case "input":
                                     return (
-                                      <TextField
-                                        key={formItem.id}
+                                      <DictationInput
                                         label={formItem.name}
-                                        variant="outlined"
                                         fullWidth
                                         onChange={handleFormInputChange(
                                           templateItemIndex,
                                           formItemIndex
                                         )}
+                                        multiline
+                                        rows={4}
+                                        key={formItem.id}
+                                        variant="outlined"
                                         value={formItem?.value}
                                       />
+
+                                      // <TextField
+                                      //   key={formItem.id}
+                                      //   label={formItem.name}
+                                      //   variant="outlined"
+                                      //   fullWidth
+                                      //   onChange={handleFormInputChange(
+                                      //     templateItemIndex,
+                                      //     formItemIndex
+                                      //   )}
+                                      //   value={formItem?.value}
+                                      // />
                                     );
                                   case "textarea":
                                     return (
-                                      <TextField
-                                        key={formItem.id}
-                                        label={formItem.name}
-                                        variant="outlined"
-                                        fullWidth
-                                        multiline
-                                        rows={4}
-                                        onChange={handleFormInputChange(
-                                          templateItemIndex,
-                                          formItemIndex
-                                        )}
-                                        value={formItem?.value}
-                                      />
+                                      <>
+                                        <DictationInput
+                                          label={formItem.name}
+                                          fullWidth
+                                          onChange={handleFormInputChange(
+                                            templateItemIndex,
+                                            formItemIndex
+                                          )}
+                                          multiline
+                                          rows={4}
+                                          key={formItem.id}
+                                          id={formItem.id}
+                                          variant="outlined"
+                                          value={formItem?.value}
+                                        />
+                                        {/* <TextField
+                                          key={formItem.id}
+                                          label={formItem.name}
+                                          variant="outlined"
+                                          fullWidth
+                                          multiline
+                                          rows={4}
+                                          onChange={handleFormInputChange(
+                                            templateItemIndex,
+                                            formItemIndex
+                                          )}
+                                          value={formItem?.value}
+                                        /> */}
+                                      </>
                                     );
                                   case "title":
                                     return (
@@ -325,7 +356,13 @@ export default function ConsultNoteEditor({
               spacing={2}
               sx={{ mt: 3, justifyContent: "flex-end" }}
             >
-              <Button variant="" onClick={() => setNoteBeingEdited(null)}>
+              <Button
+                variant=""
+                onClick={() => {
+                  setNoteBeingEdited(null);
+                  fetchNotes();
+                }}
+              >
                 Close
               </Button>
               {note.state !== "FINALIZED" && (
@@ -401,7 +438,7 @@ export default function ConsultNoteEditor({
                     color: "#8d42c8",
                   },
                   "50%": {
-                    color: "pupple",
+                    color: "purple",
                   },
                   "100%": {
                     color: "#8d42c8",

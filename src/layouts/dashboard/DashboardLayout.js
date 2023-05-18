@@ -5,6 +5,7 @@ import Nav from "@/layouts/dashboard/nav";
 import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
 import TeamContext from "@/hooks/TeamContext";
 import NotesContext from "@/hooks/NotesContext";
+import { DictationProvider } from "@/hooks/DictationContext";
 import DraggableNoteEditorContainer from "@/components/notes/DraggableNoteEditorContainer";
 import ConsultNoteDockableContainer from "@/components/notes/ConsultNoteDockableContainer";
 import MockVideoConsultWindow from "@/components/MockVideoConsultWindow";
@@ -47,29 +48,34 @@ export default function PageContainer({ children, title = "" }) {
                 )}
               </Typography>
             )}
-
-            <TeamContext.Provider
-              value={{ setNoteBeingEdited, noteBeingEdited, setShowMemberName }}
-            >
-              <NotesContext.Provider
+            <DictationProvider>
+              <TeamContext.Provider
                 value={{
-                  notes,
-                  setNotes,
-                  fetchNotes,
-                  filterBy,
-                  setFilterBy,
+                  setNoteBeingEdited,
+                  noteBeingEdited,
+                  setShowMemberName,
                 }}
               >
-                {children}
-                <div>
-                  {noteBeingEdited && (
-                    <DraggableNoteEditorContainer>
-                      <ConsultNoteDockableContainer note={noteBeingEdited} />
-                    </DraggableNoteEditorContainer>
-                  )}
-                </div>
-              </NotesContext.Provider>
-            </TeamContext.Provider>
+                <NotesContext.Provider
+                  value={{
+                    notes,
+                    setNotes,
+                    fetchNotes,
+                    filterBy,
+                    setFilterBy,
+                  }}
+                >
+                  {children}
+                  <div>
+                    {noteBeingEdited && (
+                      <DraggableNoteEditorContainer>
+                        <ConsultNoteDockableContainer note={noteBeingEdited} />
+                      </DraggableNoteEditorContainer>
+                    )}
+                  </div>
+                </NotesContext.Provider>
+              </TeamContext.Provider>
+            </DictationProvider>
           </Grid>
         </Grid>
       </Container>
