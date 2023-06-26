@@ -9,6 +9,7 @@ import { DictationProvider } from "@/hooks/DictationContext";
 import DraggableNoteEditorContainer from "@/components/notes/DraggableNoteEditorContainer";
 import ConsultNoteDockableContainer from "@/components/notes/ConsultNoteDockableContainer";
 import MockVideoConsultWindow from "@/components/MockVideoConsultWindow";
+import ChatEhr from "@/components/chat-ehr/ChatEhr";
 
 import { useMinimizeNoteContext } from "@/hooks/MinimizeNoteProvider";
 
@@ -28,30 +29,31 @@ export default function PageContainer({ children, title = "" }) {
 
   return (
     <>
-      <Container>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Header />
-          </Grid>
-          <Grid
-            item
-            xs={3}
-            mt={8}
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            <Nav />
-          </Grid>
-          <Grid item xs={12} sm={9} mt={8}>
-            {showMemberName && (
-              <Typography variant="h4" sx={{ mb: 5 }}>
-                Tristan Templeton
-                <VideoCameraFrontIcon
-                  onClick={() => setShowVideoConsult(!showVideoConsult)}
-                  sx={{ ml: 2, cursor: "pointer" }}
-                />
-              </Typography>
-            )}
-            <DictationProvider>
+      <DictationProvider>
+        <Container>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Header />
+            </Grid>
+            <Grid
+              item
+              xs={3}
+              mt={8}
+              sx={{ display: { xs: "none", sm: "block" } }}
+            >
+              <Nav />
+            </Grid>
+            <Grid item xs={12} sm={9} mt={8}>
+              {showMemberName && (
+                <Typography variant="h4" sx={{ mb: 5 }}>
+                  Tristan Templeton
+                  <VideoCameraFrontIcon
+                    onClick={() => setShowVideoConsult(!showVideoConsult)}
+                    sx={{ ml: 2, cursor: "pointer" }}
+                  />
+                </Typography>
+              )}
+
               <TeamContext.Provider
                 value={{
                   setNoteBeingEdited,
@@ -100,10 +102,11 @@ export default function PageContainer({ children, title = "" }) {
                   </div>
                 </NotesContext.Provider>
               </TeamContext.Provider>
-            </DictationProvider>
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
+        </Container>
+        <ChatEhr />
+      </DictationProvider>
       {showVideoConsult && <MockVideoConsultWindow />}
     </>
   );

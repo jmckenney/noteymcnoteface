@@ -4,7 +4,13 @@ import { Box, Fade } from "@mui/material";
 import AiProcessing from "@/components/animations/ai.json";
 import Lottie from "lottie-web";
 
-function ThinkingEloquently({ show }) {
+function ThinkingEloquently({
+  show,
+  width = "100px",
+  height = "100px",
+  top = "55px",
+  left = "50%",
+}) {
   const lottieRef = React.useRef();
   useEffect(() => {
     Lottie.loadAnimation({
@@ -25,12 +31,12 @@ function ThinkingEloquently({ show }) {
         ref={lottieRef}
         sx={{
           position: "absolute",
-          top: "55px",
-          left: "50%",
+          top: top,
+          left: left,
           transform: "translate(-50%, -50%)",
           zIndex: 1000,
-          width: "100px",
-          height: "100px",
+          width: width,
+          height: height,
         }}
       />
     </Fade>
