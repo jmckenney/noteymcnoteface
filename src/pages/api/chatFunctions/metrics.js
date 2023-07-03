@@ -10,8 +10,14 @@ export const metricFunctionDefinitionForLlm = {
   },
 };
 
-export const getRecentMetrics = () => {
-  return JSON.stringify({
-    weight: 195,
-  });
+export const getRecentMetrics = (metricType) => {
+  if (metricType === "weight") {
+    return JSON.stringify({
+      weight: 195,
+    });
+  } else {
+    return JSON.stringify({
+      a1c: 6.5,
+    });
+  }
 };

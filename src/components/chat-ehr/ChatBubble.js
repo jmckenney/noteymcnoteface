@@ -31,7 +31,9 @@ function chatBubble({ index, message }) {
           },
         }}
       >
-        <Typography variant="body1">{message.content}</Typography>
+        <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+          {message.content}
+        </Typography>
       </CardContent>
     </Card>
   );

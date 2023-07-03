@@ -21,12 +21,16 @@ export async function callFunctionsAndAddReturnToMessages(
   const recommendedFunctionNameToCall =
     responseMessageWithFunctionRecommendation.function_call.name;
   const functionToCall = availableFunctions[recommendedFunctionNameToCall];
-  const functionArgs = JSON.parse(
-    responseMessageWithFunctionRecommendation.function_call.arguments
-  );
+  const functionArgs =
+    JSON.parse(
+      responseMessageWithFunctionRecommendation.function_call.arguments
+    ) || {};
 
   // ToDo, carefully call arguments and augment if needed
-  const functionReturn = functionToCall();
+  const functionReturn = functionToCall.apply(
+    null,
+    Object.values(functionArgs)
+  );
 
   const messagesWithFunctionCallMessage = [
     ...messages,
